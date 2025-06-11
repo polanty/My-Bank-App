@@ -1,6 +1,18 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  setDoc,
+  addDoc,
+  getFirestore,
+} from "firebase/firestore";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,15 +30,37 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { auth } from "./firebaseAuth"; // Assuming you have your auth instance imported
-import { db } from "./firebaseFirestore"; // Assuming you have your firestore instance imported
+const db = getFirestore(app);
+
+//Adding a collection to my application using this function provided by firestore
+// Let's add a new user document to a collection called 'users'
+export async function addNewUserToCollection(userData) {
+  try {
+    // Get a reference to the 'users' collection
+    const usersCollectionRef = collection(db, "users");
+
+    // Add a new document with a generated ID to the 'users' collection
+    const docRef = await addDoc(usersCollectionRef, userData);
+
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+// Example usage:
+// addNewUser({ name: "Alice Smith", email: "alice.smith@example.com" });
+
+export const auth = getAuth();
 
 // Function to create a new user and initialize their data in Firestore
-async function createNewUserWithData(email, password, initialDisplayName) {
+export async function createNewUserWithData(
+  email,
+  password,
+  initialDisplayName
+) {
   try {
     // 1. Create the user account using Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(
