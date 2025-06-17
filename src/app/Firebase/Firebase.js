@@ -2,15 +2,19 @@
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   getAuth,
   updateProfile,
+  signOut,
 } from "firebase/auth";
 import {
   collection,
   doc,
   setDoc,
+  getDoc,
   addDoc,
   getFirestore,
+  serverTimestamp,
 } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -18,7 +22,7 @@ import {
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyBJ2d5qseFeuw3c2UXkDvCiKcGjUMIqZJo",
   authDomain: "my-bank--app.firebaseapp.com",
   projectId: "my-bank--app",
@@ -53,7 +57,7 @@ export async function addNewUserToCollection(userData) {
 // Example usage:
 // addNewUser({ name: "Alice Smith", email: "alice.smith@example.com" });
 
-export const auth = getAuth();
+export const auth = getAuth(app);
 
 // Function to create a new user and initialize their data in Firestore
 export async function createNewUserWithData(
@@ -111,5 +115,71 @@ export async function createNewUserWithData(
   }
 }
 
-// Example usage:
-// createNewUserWithData("testuser@example.com", "securepassword123", "Test User");
+export async function signInUserUsingEmailandPassword(email, password) {
+  try {
+    const userdetails = await signInWithEmailAndPassword(auth, email, password);
+
+    const user = userdetails.user;
+
+    return user;
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.log(errorCode, errorMessage);
+  }
+}
+
+export async function signUserOut() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const createUserProfile = async (user) => {
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      role: "user", // default role
+      createdAt: serverTimestamp(),
+    });
+    console.log("New user profile created");
+  } else {
+    console.log("User already exists");
+  }
+};
+
+export async function createNewUserWithDataTrial(
+  email,
+  password,
+  initialDisplayName
+) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+
+    await updateProfile(user, {
+      displayName: initialDisplayName,
+    });
+
+    await createUserDocument(user);
+
+    return user;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+}

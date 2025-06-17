@@ -5,17 +5,24 @@ import { useGetUsersQuery } from "./RTK_Query/rtkApi";
 import {
   addNewUserToCollection,
   createNewUserWithData,
+  signInUserUsingEmailandPassword,
+  signUserOut,
 } from "./Firebase/Firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { initialstateInterface } from "./reduxSlices/userslice";
 import { RootState } from "./store/store";
-import { calltestselector } from "./reduxSlices/userslice";
+// import { login } from "./reduxSlices/userslice";
+import useAuthListener from "./hooks/Authchange";
 
 export default function Home() {
+  useAuthListener();
   const { data: users, error, isLoading } = useGetUsersQuery();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const { testselector } = useSelector(
+  //testselector,
+  //calltestselector,
+
+  const { currentUser } = useSelector(
     (state: RootState): initialstateInterface => state.user
   );
 
@@ -48,9 +55,28 @@ export default function Home() {
     }
   };
 
-  const testObj = { email: "abiola@example.email", password: "123456" };
+  // const testObj = { email: "abiola@example.email", password: "123456" };
 
-  const handleclickRedux = () => dispatch(calltestselector(testObj));
+  const handleclickSignOut = async () => {
+    try {
+      await signUserOut();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleclickSignIn = async () => {
+    try {
+      const user = await signInUserUsingEmailandPassword(
+        "test2@gmail.com",
+        "Godisgood1995!"
+      );
+
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex flex-row justify-center">
@@ -66,10 +92,11 @@ export default function Home() {
           </ul>
         </div>
         <div>
-          {testselector ? (
+          {currentUser ? (
             <>
-              <h1>{testselector.email}</h1>
-              <h1>{testselector.password}</h1>
+              <h1>{currentUser.email}</h1>
+              <h1>{currentUser.displayName}</h1>
+              {/* <h1>{</h1> */}
             </>
           ) : (
             <h1 className="text-xl font-bold">No Test seselctor</h1>
@@ -97,20 +124,30 @@ export default function Home() {
           Add User
         </button>
 
-        <button
-          type="button"
-          className="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          onClick={handleclickRedux}
-        >
-          Add Redux User
-        </button>
+        {currentUser ? (
+          <button
+            type="button"
+            className="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            onClick={handleclickSignOut}
+          >
+            Sign Out
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            onClick={handleclickSignIn}
+          >
+            Sign In
+          </button>
+        )}
 
         <button
           type="button"
           className="text-white bg-yellow-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           onClick={creatNewUserhandleclick}
         >
-          Create Firebase User
+          Sign Up
         </button>
       </main>
     </div>
