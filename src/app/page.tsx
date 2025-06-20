@@ -1,5 +1,6 @@
 "use client";
 
+import useAuthListener from "./hooks/Authchange";
 import Link from "next/link";
 import { useGetUsersQuery } from "./RTK_Query/rtkApi";
 import {
@@ -8,11 +9,10 @@ import {
   signInUserUsingEmailandPassword,
   signUserOut,
 } from "./Firebase/Firebase";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { initialstateInterface } from "./reduxSlices/userslice";
 import { RootState } from "./store/store";
 // import { login } from "./reduxSlices/userslice";
-import useAuthListener from "./hooks/Authchange";
 
 export default function Home() {
   useAuthListener();
@@ -25,6 +25,8 @@ export default function Home() {
   const { currentUser } = useSelector(
     (state: RootState): initialstateInterface => state.user
   );
+
+  console.log(currentUser);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching users</p>;
@@ -110,7 +112,7 @@ export default function Home() {
         </Link>
 
         <Link
-          href={"/signIn"}
+          href={"/signInpage"}
           className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
         >
           <p className="hidden md:block">Link here to Sign up</p>

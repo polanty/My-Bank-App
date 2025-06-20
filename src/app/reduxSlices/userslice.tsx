@@ -12,7 +12,7 @@ export interface initialstateInterface {
 
 const initialState: initialstateInterface = {
   currentUser: null,
-  loading: true,
+  loading: false,
   testselector: null,
 };
 

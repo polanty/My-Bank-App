@@ -127,6 +127,8 @@ export async function signInUserUsingEmailandPassword(email, password) {
     const errorMessage = error.message;
 
     console.log(errorCode, errorMessage);
+
+    throw error;
   }
 }
 

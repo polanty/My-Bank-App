@@ -1,11 +1,12 @@
 "use client";
-import dynamic from "next/dynamic";
+//import { signInUserUsingEmailandPassword } from "../Firebase/Firebase";
+import { useSignupMutation, useSigninMutation } from "../RTK_Query/authApi";
+import { useRouter } from "next/navigation"; // ✅ App Router
 import { useState } from "react";
-
-const FirebaseAuthUI = dynamic(
-  () => import("../components/FirebaseSignIn/FireBaseSignInComponent"),
-  { ssr: false }
-);
+import { useSelector, useDispatch } from "react-redux";
+import { initialstateInterface } from "../reduxSlices/userslice";
+import { RootState } from "../store/store";
+import { login, setLoading } from "../reduxSlices/userslice";
 
 type AuthFormData = {
   displayName: string;
@@ -14,6 +15,26 @@ type AuthFormData = {
 };
 
 export default function AuthPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { loading } = useSelector(
+    (state: RootState): initialstateInterface => state.user
+  );
+
+  const [signup, { isLoading: signupLoading, error: signupError }] =
+    useSignupMutation();
+
+  const [signin, { isLoading: signinLoading, error: signinError }] =
+    useSigninMutation(); // ✅ Correct mutation
+
+  // useEffect(() => {
+  //   if (signinData) {
+  //     dispatch(login(signinData));
+  //     router.push("/userprofile"); // navigate to home page
+  //   }
+  // }, [signinData, dispatch, router]);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState<AuthFormData>({
     displayName: "",
@@ -28,18 +49,32 @@ export default function AuthPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSignUp) {
-      // 🔒 Sign-up logic here
-      console.log("Signing up:", formData);
-    } else {
-      // 🔑 Sign-in logic here
-      console.log("Signing in:", {
-        email: formData.email,
-        password: formData.password,
-      });
+    dispatch(setLoading(true));
+
+    try {
+      if (isSignUp) {
+        // 🔒 Sign-up logic
+        const user = await signup(formData).unwrap();
+
+        dispatch(login(user)); // save user to redux
+        router.push("/userprofile");
+
+        console.log("User signed up:", user);
+      } else {
+        // 🔑 Sign-in logic
+        const user = await signin(formData).unwrap();
+
+        dispatch(login(user));
+        router.push("/userprofile");
+
+        console.log("Signed In,", user);
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      dispatch(setLoading(false));
     }
   };
 
@@ -50,7 +85,7 @@ export default function AuthPage() {
           {isSignUp ? "Create an Account" : "Sign In to Your Account"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           {isSignUp && (
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -74,9 +109,9 @@ export default function AuthPage() {
             <input
               type="email"
               name="email"
-              value={formData.email}
+              value={formData.email} //formData.email
               onChange={handleChange}
-              required
+              // required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
@@ -88,18 +123,24 @@ export default function AuthPage() {
             <input
               type="password"
               name="password"
-              value={formData.password}
+              value={formData.password} //formData.password
               onChange={handleChange}
-              required
+              // required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
-
-          <button
+          {/* <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
           >
             {isSignUp ? "Sign Up" : "Sign In"}
+          </button> */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+          >
+            {loading ? "Submitting..." : isSignUp ? "Sign Up" : "Sign In"}
           </button>
         </form>
 
@@ -113,8 +154,6 @@ export default function AuthPage() {
             {isSignUp ? "Sign In" : "Sign Up"}
           </button>
         </p>
-
-        <FirebaseAuthUI />
       </div>
     </main>
   );
