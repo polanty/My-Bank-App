@@ -1,12 +1,12 @@
 "use client";
 //import { signInUserUsingEmailandPassword } from "../Firebase/Firebase";
 import { useSignupMutation, useSigninMutation } from "../RTK_Query/authApi";
-import { useRouter } from "next/navigation"; // ✅ App Router
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { initialstateInterface } from "../reduxSlices/userslice";
 import { RootState } from "../store/store";
 import { login, setLoading } from "../reduxSlices/userslice";
+import { Spinner } from "react-bootstrap";
 
 type AuthFormData = {
   displayName: string;
@@ -15,10 +15,9 @@ type AuthFormData = {
 };
 
 export default function AuthPage() {
-  const router = useRouter();
   const dispatch = useDispatch();
 
-  const { loading } = useSelector(
+  const { currentUser, loading } = useSelector(
     (state: RootState): initialstateInterface => state.user
   );
 
@@ -60,7 +59,7 @@ export default function AuthPage() {
         const user = await signup(formData).unwrap();
 
         dispatch(login(user)); // save user to redux
-        router.push("/userprofile");
+        //router.push("/userprofile");
 
         console.log("User signed up:", user);
       } else {
@@ -68,7 +67,7 @@ export default function AuthPage() {
         const user = await signin(formData).unwrap();
 
         dispatch(login(user));
-        router.push("/userprofile");
+        //router.push("/userprofile");
 
         console.log("Signed In,", user);
       }
@@ -77,6 +76,44 @@ export default function AuthPage() {
       dispatch(setLoading(false));
     }
   };
+
+  // if (signinLoading || signupLoading)
+  //   return (
+  //     <div
+  //       className="d-flex justify-content-center align-items-center"
+  //       style={{ height: "100vh" }}
+  //     >
+  //       <Spinner animation="border" role="status" variant="primary">
+  //         <span className="visually-hidden">Signing you in...</span>
+  //       </Spinner>
+  //     </div>
+  //   );
+
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Signing you in...</span>
+        </Spinner>
+      </div>
+    );
+  } else if (currentUser !== null) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Signing you in...</span>
+        </Spinner>
+
+        <h1> We are Siging you In</h1>
+      </div>
+    );
+  }
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -137,10 +174,14 @@ export default function AuthPage() {
           </button> */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={signinLoading || signupLoading}
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
           >
-            {loading ? "Submitting..." : isSignUp ? "Sign Up" : "Sign In"}
+            {signinLoading || signupLoading
+              ? "Submitting..."
+              : isSignUp
+              ? "Sign Up"
+              : "Sign In"}
           </button>
         </form>
 

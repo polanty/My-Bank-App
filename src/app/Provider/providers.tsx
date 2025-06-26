@@ -2,9 +2,21 @@
 
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-//import useAuthListener from "../hooks/Authchange";
+
+import useAuthListener from "../hooks/Authchange";
+import useAutoSignOut from "../Utils/Components/SignOutAuto";
+
+// 👇 Separate wrapper that uses the hook inside Redux Provider
+function AuthListenerWrapper({ children }: { children: React.ReactNode }) {
+  useAuthListener();
+  useAutoSignOut();
+  return <>{children}</>;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  //useAuthListener(); //  Listen to firebase auth state change
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <Provider store={store}>
+      <AuthListenerWrapper>{children}</AuthListenerWrapper>
+    </Provider>
+  );
 }

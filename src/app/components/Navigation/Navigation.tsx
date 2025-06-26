@@ -2,23 +2,26 @@
 
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { signUserOut } from "@/app/Firebase/Firebase";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { initialstateInterface } from "@/app/reduxSlices/userslice";
+// import { initialstateInterface } from "@/app/reduxSlices/userslice";
 import { RootState } from "@/app/store/store";
+import { setLoading } from "@/app/reduxSlices/userslice";
 import Link from "next/link";
+import Image from "next/image";
 
 const Navigation = () => {
-  const { currentUser } = useSelector(
-    (state: RootState): initialstateInterface => state.user
-  );
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleclickSignOut = async () => {
     try {
       await signUserOut();
       router.push("/");
+
+      dispatch(setLoading(false));
     } catch (error) {
       console.log(error);
     }
@@ -27,7 +30,16 @@ const Navigation = () => {
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
-        <Navbar.Brand href="/">Ego Bank</Navbar.Brand>
+        <Navbar.Brand href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="Ego Bank Logo"
+            width={30}
+            height={30}
+            priority
+          />
+          Ego Bank
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">

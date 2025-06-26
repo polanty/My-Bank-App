@@ -1,10 +1,9 @@
 "use client";
 
-import useAuthListener from "./hooks/Authchange";
+//import useAuthListener from "./hooks/Authchange";
 import Link from "next/link";
 import { useGetUsersQuery } from "./RTK_Query/rtkApi";
 import {
-  addNewUserToCollection,
   createNewUserWithData,
   signInUserUsingEmailandPassword,
   signUserOut,
@@ -15,12 +14,9 @@ import { RootState } from "./store/store";
 // import { login } from "./reduxSlices/userslice";
 
 export default function Home() {
-  useAuthListener();
-  const { data: users, error, isLoading } = useGetUsersQuery();
-  // const dispatch = useDispatch();
+  //useAuthListener();
 
-  //testselector,
-  //calltestselector,
+  const { data: users, error, isLoading } = useGetUsersQuery();
 
   const { currentUser } = useSelector(
     (state: RootState): initialstateInterface => state.user
@@ -31,23 +27,10 @@ export default function Home() {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching users</p>;
 
-  const handleclick = async () => {
-    try {
-      await addNewUserToCollection({
-        name: "Alice Smith",
-        email: "alice.smith@gmail.com",
-        role: "ghjkas",
-      });
-      console.log("document created");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const creatNewUserhandleclick = async () => {
     try {
       await createNewUserWithData(
-        "Abiola.samson@gmail.com",
+        "testingsome@gmail.com",
         "Alice Smith",
         "ghjkas"
       );
@@ -117,14 +100,6 @@ export default function Home() {
         >
           <p className="hidden md:block">Link here to Sign up</p>
         </Link>
-
-        <button
-          type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          onClick={handleclick}
-        >
-          Add User
-        </button>
 
         {currentUser ? (
           <button

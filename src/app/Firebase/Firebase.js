@@ -8,13 +8,17 @@ import {
   signOut,
 } from "firebase/auth";
 import {
-  collection,
   doc,
   setDoc,
   getDoc,
-  addDoc,
+  where,
   getFirestore,
-  serverTimestamp,
+  query,
+  collection,
+  getDocs,
+  runTransaction,
+  arrayUnion,
+  Timestamp,
 } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -34,30 +38,43 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
 
-//Adding a collection to my application using this function provided by firestore
-// Let's add a new user document to a collection called 'users'
-export async function addNewUserToCollection(userData) {
+export const auth = getAuth(app);
+
+//Account object type
+
+//Generating a unique account number based on the counter setting stored on the counter variable stored in firestore
+
+export const generateUniqueAccountNumber = async () => {
+  const counterRef = doc(db, "settings", "counters");
+
   try {
-    // Get a reference to the 'users' collection
-    const usersCollectionRef = collection(db, "users");
+    const accountNumber = await runTransaction(db, async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
 
-    // Add a new document with a generated ID to the 'users' collection
-    const docRef = await addDoc(usersCollectionRef, userData);
+      if (!counterDoc.exists()) {
+        throw "Counter document does not exist!";
+      }
 
-    console.log("Document written with ID: ", docRef.id);
+      const current = counterDoc.data().lastAccountNumber || 1000000000;
+      const next = current + 1;
+
+      transaction.update(counterRef, { lastAccountNumber: next });
+
+      return next;
+    });
+
+    return accountNumber.toString();
   } catch (e) {
-    console.error("Error adding document: ", e);
+    console.error("Failed to generate account number:", e);
+    throw e;
   }
-}
+};
 
 // Example usage:
 // addNewUser({ name: "Alice Smith", email: "alice.smith@example.com" });
-
-export const auth = getAuth(app);
 
 // Function to create a new user and initialize their data in Firestore
 export async function createNewUserWithData(
@@ -87,19 +104,166 @@ export async function createNewUserWithData(
     // We'll create a document in the 'users' collection with the UID
     const userDocRef = doc(db, "users", userId);
 
+    const accountNumber = await generateUniqueAccountNumber();
+
+    const transactions = [
+      // You can start with an empty array [] or some initial objects
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Mike",
+        type: "debit",
+        amount: 6000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Daniel",
+        type: "debit",
+        amount: 800,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Onyinye",
+        type: "debit",
+        amount: 900,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Muyiwa",
+        type: "debit",
+        amount: 700,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Daniel",
+        type: "debit",
+        amount: 400,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+      {
+        AccountNumber: 123456789,
+        AccountName: "Abiola Tijani",
+        type: "Credit",
+        amount: 10000,
+        Date: new Date().toISOString(),
+        description: "",
+      },
+    ];
+
+    const bonus = 50000;
+
+    const balance = bonus;
+
     // Define the initial data structure (your "schema" for this user's document)
     const initialUserData = {
       displayName: initialDisplayName,
       email: user.email, // You might store email here for easy lookup, but Auth is source of truth
-      createdAt: new Date(), // Timestamp of creation
+      accountNumber,
+      createdAt: new Date().toISOString(), // Timestamp of creation
       // Here's your array to hold other objects!
-      myListOfStuff: [
-        { id: "item1", name: "First Item", value: 10 },
-        // You can start with an empty array [] or some initial objects
-      ],
+      Transactions: transactions,
       settings: {
         theme: "light",
       },
+      isactive: true,
+      Bonus: bonus,
+      Balance: balance,
       // ... other user-specific fields you need
     };
 
@@ -107,7 +271,11 @@ export async function createNewUserWithData(
     await setDoc(userDocRef, initialUserData);
 
     console.log("New user created and data initialized in Firestore:", userId);
-    return user; // Return the created user object
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+    }; // Return the created user object
   } catch (error) {
     console.error("Error creating new user or initializing data:", error);
     // Handle specific errors (e.g., email already in use)
@@ -121,7 +289,11 @@ export async function signInUserUsingEmailandPassword(email, password) {
 
     const user = userdetails.user;
 
-    return user;
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+    };
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
@@ -140,48 +312,185 @@ export async function signUserOut() {
   }
 }
 
-export const createUserProfile = async (user) => {
-  if (!user) return;
+//Get one user Transaction based on the user id
+export const getUserTransactions = async (userId) => {
+  const docRef = doc(db, "users", userId);
+  const docSnap = await getDoc(docRef);
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
 
-  if (!userSnap.exists()) {
-    await setDoc(userRef, {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "",
-      role: "user", // default role
-      createdAt: serverTimestamp(),
-    });
-    console.log("New user profile created");
+    return docSnap.data();
   } else {
-    console.log("User already exists");
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
   }
 };
 
-export async function createNewUserWithDataTrial(
-  email,
-  password,
-  initialDisplayName
-) {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
+//Query firestore to retreive unique account Number
+export const getUserByAccountNumber = async (accountNumber) => {
+  const usersRef = collection(db, "users"); // Your Firestore collection
+  const q = query(usersRef, where("accountNumber", "==", accountNumber));
 
-    await updateProfile(user, {
-      displayName: initialDisplayName,
+  const querySnapshot = await getDocs(q);
+  console.log(querySnapshot);
+  if (querySnapshot.empty) {
+    console.log("No matching documents.");
+    return null;
+  }
+
+  // Since it's a unique field, assume only one match
+  const doc = querySnapshot.docs[0];
+  const data = doc.data();
+
+  // 🔁 Convert Firestore Timestamp fields to ISO strings for Redux compatibility
+  const transactions = (data.Transactions || []).map((tx) => ({
+    ...tx,
+    Date:
+      tx.Date instanceof Timestamp
+        ? tx.Date.toDate().toISOString()
+        : tx.Date ?? null,
+  }));
+
+  const initialUserData = {
+    displayName: data.displayName || "",
+    email: data.email || "",
+    accountNumber: data.accountNumber,
+    createdAt:
+      data.createdAt instanceof Timestamp
+        ? data.createdAt.toDate().toISOString()
+        : new Date().toISOString(), // fallback
+    Transactions: transactions,
+    settings: data.settings || { theme: "light" },
+    isactive: data.isactive ?? true,
+    Bonus: data.Bonus ?? 0,
+    Balance: data.Balance ?? 0,
+  };
+
+  return { data: initialUserData };
+
+  // return { id: doc.id, ...doc.data() };
+};
+
+//Code to update the balance after transactions
+// transactions.legth > 0  ? transactions.reduce((sum, tx) => {
+//       if (tx.type.toLowerCase() === "credit") {
+//         return sum + tx.amount;
+//       } else {
+//         return sum - tx.amount;
+//       }
+//     }, bonus)
+
+//Firestore Transaction to Add a Transaction and Update Balance
+
+export const addTransactionAndUpdateBalance = async (userId, newTx) => {
+  const userRef = doc(db, "users", userId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+
+      if (!userDoc.exists()) {
+        throw new Error("User not found");
+      }
+
+      const userData = userDoc.data();
+      let balance = userData.Balance ?? 0;
+
+      //Check if the Amount is enough especially with the debit
+      if (newTx.type.toLowerCase() === "debit" && newTx.amount > balance) {
+        throw new Error(
+          "You do Not have enough balance to perform this transaction"
+        );
+      }
+
+      // Prepare new transaction with timestamp
+      const newTransaction = {
+        ...newTx,
+        date: Timestamp.now(),
+      };
+
+      // Adjust balance
+      if (newTx.type.toLowerCase() === "credit") {
+        balance += newTx.amount;
+      } else if (newTx.type.toLowerCase() === "debit") {
+        balance -= newTx.amount;
+      }
+
+      // Update Firestore atomically
+      transaction.update(userRef, {
+        Balance: balance,
+        Transactions: arrayUnion(newTransaction),
+      });
     });
 
-    await createUserDocument(user);
-
-    return user;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
+    console.log("Transaction added and balance updated.");
+  } catch (e) {
+    console.error("Transaction failed: ", e);
   }
-}
+};
+
+export const transferFunds = async (
+  senderId,
+  receiverId,
+  amount,
+  description = "The money has gone through"
+) => {
+  const senderRef = doc(db, "users", senderId);
+  const receiverRef = doc(db, "users", receiverId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const senderDoc = await transaction.get(senderRef);
+      const receiverDoc = await transaction.get(receiverRef);
+
+      if (!senderDoc.exists() || !receiverDoc.exists()) {
+        throw new Error("Sender or receiver not found");
+      }
+
+      const senderData = senderDoc.data();
+      const receiverData = receiverDoc.data();
+
+      if (senderData.Balance < amount) {
+        throw new Error("Insufficient funds");
+      }
+
+      // Create timestamp once for consistency
+      const timestamp = Timestamp.now();
+
+      // Prepare transactions
+      const debitTransaction = {
+        amount,
+        type: "debit",
+        description: description || `Transfer to ${receiverData.displayName}`,
+        date: timestamp,
+        counterparty: receiverData.accountNumber,
+      };
+
+      const creditTransaction = {
+        amount,
+        type: "credit",
+        description: description || `Received from ${senderData.displayName}`,
+        date: timestamp,
+        counterparty: senderData.accountNumber,
+      };
+
+      // Update sender
+      transaction.update(senderRef, {
+        Balance: senderData.Balance - amount,
+        Transactions: arrayUnion(debitTransaction),
+      });
+
+      // Update receiver
+      transaction.update(receiverRef, {
+        Balance: receiverData.Balance + amount,
+        Transactions: arrayUnion(creditTransaction),
+      });
+    });
+
+    console.log("Transfer successful");
+  } catch (e) {
+    console.error("Transfer failed: ", e.message);
+    throw e;
+  }
+};
