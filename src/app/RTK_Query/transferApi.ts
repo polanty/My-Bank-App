@@ -14,6 +14,20 @@ interface Transaction {
   counterparty?: string;
 }
 
+// Safely convert all nested Firestore Timestamps
+// const serializeUser = (user: Transaction) => ({
+//   ...user,
+//   createdAt: user.createdAt instanceof Timestamp
+//     ? user.createdAt.toDate().toISOString()
+//     : user.createdAt,
+//   Transactions: user.Transactions?.map((tx: any) => ({
+//     ...tx,
+//     date: tx.date instanceof Timestamp
+//       ? tx.date.toDate().toISOString()
+//       : tx.date,
+//   })) || [],
+// });
+
 export const transactionApi = createApi({
   reducerPath: "transactionApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/" }), // Not used here but required

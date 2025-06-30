@@ -320,7 +320,35 @@ export const getUserTransactions = async (userId) => {
   if (docSnap.exists()) {
     console.log("Document data:", docSnap.data());
 
-    return docSnap.data();
+    const data = docSnap.data();
+
+    // 🔁 Convert Firestore Timestamp fields to ISO strings for Redux compatibility
+    const transactions = (data.Transactions || []).map((tx) => ({
+      ...tx,
+      Date:
+        tx.Date instanceof Timestamp
+          ? tx.Date.toDate().toISOString()
+          : tx.Date ?? null,
+    }));
+
+    const initialUserData = {
+      displayName: data.displayName || "",
+      email: data.email || "",
+      accountNumber: data.accountNumber,
+      createdAt:
+        data.createdAt instanceof Timestamp
+          ? data.createdAt.toDate().toISOString()
+          : new Date().toISOString(), // fallback
+      Transactions: transactions,
+      settings: data.settings || { theme: "light" },
+      isactive: data.isactive ?? true,
+      Bonus: data.Bonus ?? 0,
+      Balance: data.Balance ?? 0,
+    };
+
+    return { ...initialUserData };
+
+    // return docSnap.data();
   } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
@@ -367,7 +395,7 @@ export const getUserByAccountNumber = async (accountNumber) => {
     Balance: data.Balance ?? 0,
   };
 
-  return { data: initialUserData };
+  return { ...initialUserData };
 
   // return { id: doc.id, ...doc.data() };
 };
@@ -455,15 +483,15 @@ export const transferFunds = async (
         throw new Error("Insufficient funds");
       }
 
-      // Create timestamp once for consistency
-      const timestamp = Timestamp.now();
+      // Create timestamp and serialize it
+      const isoDate = Timestamp.now().toDate().toISOString();
 
       // Prepare transactions
       const debitTransaction = {
         amount,
         type: "debit",
         description: description || `Transfer to ${receiverData.displayName}`,
-        date: timestamp,
+        date: isoDate,
         counterparty: receiverData.accountNumber,
       };
 
@@ -471,7 +499,7 @@ export const transferFunds = async (
         amount,
         type: "credit",
         description: description || `Received from ${senderData.displayName}`,
-        date: timestamp,
+        date: isoDate,
         counterparty: senderData.accountNumber,
       };
 
