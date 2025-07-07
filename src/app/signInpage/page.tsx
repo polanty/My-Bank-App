@@ -27,13 +27,6 @@ export default function AuthPage() {
   const [signin, { isLoading: signinLoading, error: signinError }] =
     useSigninMutation(); // ✅ Correct mutation
 
-  // useEffect(() => {
-  //   if (signinData) {
-  //     dispatch(login(signinData));
-  //     router.push("/userprofile"); // navigate to home page
-  //   }
-  // }, [signinData, dispatch, router]);
-
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState<AuthFormData>({
     displayName: "",
@@ -76,18 +69,6 @@ export default function AuthPage() {
       dispatch(setLoading(false));
     }
   };
-
-  // if (signinLoading || signupLoading)
-  //   return (
-  //     <div
-  //       className="d-flex justify-content-center align-items-center"
-  //       style={{ height: "100vh" }}
-  //     >
-  //       <Spinner animation="border" role="status" variant="primary">
-  //         <span className="visually-hidden">Signing you in...</span>
-  //       </Spinner>
-  //     </div>
-  //   );
 
   if (loading) {
     return (

@@ -11,9 +11,7 @@ import {
 import { useSelector } from "react-redux";
 import { initialstateInterface } from "./reduxSlices/userslice";
 import { RootState } from "./store/store";
-import UserPDF from "./components/UserPDF/UserPDF";
-//import PdfLibGenerator from "./components/PDFlib/UserPDF";
-import MyComponent from "./components/PDFlib/UserPDF";
+import UserPDFLib from "./components/UserPDF/UserPDF";
 
 export default function Home() {
   //useAuthListener();
@@ -149,10 +147,7 @@ export default function Home() {
         >
           Sign Up
         </button>
-
-        <UserPDF user={mockUser} />
-        {/* <PdfLibGenerator /> */}
-        <MyComponent />
+        <UserPDFLib user={mockUser} />
       </main>
     </div>
   );

@@ -4,12 +4,14 @@
 import React from "react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
-type Transaction = {
-  amount: number;
+export interface transacs {
+  AccountNumber: number;
+  AccountName: string;
   type: string;
-  date: string;
+  amount: number;
+  date: Date;
   description: string;
-};
+}
 
 type Props = {
   user: {
@@ -17,7 +19,7 @@ type Props = {
     email: string;
     accountNumber: string;
     Balance: number;
-    Transactions: Transaction[];
+    Transactions: transacs[];
   };
 };
 
@@ -46,17 +48,17 @@ const generateUserPdf = async (user: Props["user"]) => {
   drawLine(`Name: ${user.displayName}`);
   drawLine(`Email: ${user.email}`);
   drawLine(`Account Number: ${user.accountNumber}`);
-  drawLine(`Balance: ₦${user.Balance.toLocaleString()}`);
+  drawLine(`Balance: ${user.Balance.toLocaleString()}`);
 
   // Transactions
   drawLine("Recent Transactions:", 16, 25);
 
-  user.Transactions.slice(-5)
+  user.Transactions.slice()
     .reverse()
     .forEach((tx) => {
       const txLine = `[${new Date(
         tx.date
-      ).toLocaleDateString()}] ${tx.type.toUpperCase()} ₦${tx.amount.toLocaleString()} — ${
+      ).toLocaleDateString()}] ${tx.type.toUpperCase()} ${tx.amount.toLocaleString()} — ${
         tx.description
       }`;
       drawLine(txLine, 11, 18);

@@ -53,7 +53,6 @@ export default function UserProfile() {
       <h1>Welcome to the User Profile</h1>
 
       <h1>{currentUser?.displayName}</h1>
-
       <>
         <TransactionsPage />
       </>

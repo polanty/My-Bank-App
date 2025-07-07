@@ -6,7 +6,7 @@ const TransactionsPage = () => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const {
-    data: transactions,
+    data: user,
     isLoading,
     error,
   } = useGetUserTransactionsQuery(currentUser?.uid);
@@ -17,16 +17,14 @@ const TransactionsPage = () => {
   return (
     <div>
       <h1>
-        Account Number: {transactions?.accountNumber}
-        <span> : {transactions?.Balance}</span>
+        Account Number: {user?.accountNumber}
+        <span> : {user?.Balance}</span>
       </h1>
 
-      <h2>
-        You have been assigned an initial Bonus of : {transactions?.Bonus}
-      </h2>
+      <h2>You have been assigned an initial Bonus of : {user?.Bonus}</h2>
       <h2>Your Transactions</h2>
 
-      {transactions?.Transactions && transactions.Transactions.length > 0 ? (
+      {user?.Transactions && user.Transactions.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -38,7 +36,7 @@ const TransactionsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.Transactions.map((tx, i) => (
+            {user.Transactions.map((tx, i) => (
               <tr key={i}>
                 <td>{tx.AccountNumber}</td>
                 <td>{tx.AccountName}</td>

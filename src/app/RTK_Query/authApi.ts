@@ -83,8 +83,8 @@ export const authApi = createApi({
     getUserTransactions: builder.query<initialUserData, string>({
       queryFn: async (uid) => {
         try {
-          const transactions = await getUserTransactions(uid); // your async Firestore fetch
-          return { data: transactions };
+          const user = await getUserTransactions(uid); // your async Firestore fetch
+          return { data: user };
         } catch (error: any) {
           return { error: { status: "CUSTOM_ERROR", error: error.message } };
         }
