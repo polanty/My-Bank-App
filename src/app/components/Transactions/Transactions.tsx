@@ -1,15 +1,22 @@
 import { useGetUserTransactionsQuery } from "@/app/RTK_Query/authApi";
 import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
+import { initialstateInterface } from "@/app/reduxSlices/userslice";
 
 const TransactionsPage = () => {
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const { currentUser } = useSelector(
+    (state: RootState): initialstateInterface => state.user
+  );
+
+  const CurrentUserUid = currentUser?.uid;
 
   const {
     data: user,
     isLoading,
     error,
-  } = useGetUserTransactionsQuery(currentUser?.uid);
+  } = useGetUserTransactionsQuery(CurrentUserUid!, {
+    skip: !CurrentUserUid,
+  });
 
   if (isLoading) return <p>Loading transactions...</p>;
   if (error) return <p>Error loading transactions</p>;
@@ -38,8 +45,8 @@ const TransactionsPage = () => {
           <tbody>
             {user.Transactions.map((tx, i) => (
               <tr key={i}>
-                <td>{tx.AccountNumber}</td>
-                <td>{tx.AccountName}</td>
+                <td>{tx.counterparty}</td>
+                <td>{tx.counterpartyAccount}</td>
                 <td>{tx.type}</td>
                 {/* <td>{tx.Date}</td> */}
                 <td>${tx.amount.toLocaleString()}</td>

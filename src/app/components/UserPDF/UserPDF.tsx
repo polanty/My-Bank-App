@@ -3,15 +3,7 @@
 
 import React from "react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-
-export interface transacs {
-  AccountNumber: number;
-  AccountName: string;
-  type: string;
-  amount: number;
-  date: Date;
-  description: string;
-}
+import { transacs } from "@/app/RTK_Query/authApi";
 
 type Props = {
   user: {

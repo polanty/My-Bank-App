@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store";
 import { useGetUserByAccountNumberQuery } from "@/app/RTK_Query/transferApi";
 import { transferFunds } from "@/app/Firebase/Firebase";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -10,6 +12,9 @@ const Payments_and_Transfer = () => {
   const [accountNumber, setAccountNumber] = useState("");
   const [submitted, setSubmitted] = useState("");
   const [amount, setAmount] = useState("");
+
+  //Get the current user
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   //The main goal is to have a person to be able to search for a user using their account number
   //if user exist then they should be able to submit a transfer request to the user account
@@ -29,24 +34,12 @@ const Payments_and_Transfer = () => {
 
   const handleSendButton = async (e: React.FormEvent) => {
     e.preventDefault();
+    const senderUid = currentUser && currentUser.uid;
+    const receiverUid = user && user.uid;
 
-    await transferFunds(
-      "wWsN0KnGBcU9A0WkR2n5dvA3zMK2",
-      "txVXZHNp2qRxpXHgBQSOqgldmYD2",
-      10000
-    );
-    //Object shape for each transaction
-    // {
-    //     AccountNumber: 123456789,
-    //     AccountName: "Abiola Tijani",
-    //     type: "Credit",
-    //     amount: 10000,
-    //     Date: new Date().toISOString(),
-    //   },
-    //signed in user : "txVXZHNp2qRxpXHgBQSOqgldmYD2"
-    //sending user :  'wWsN0KnGBcU9A0WkR2n5dvA3zMK2'
-    //Transaction cannot proceed if the user does not have enough balance
-    //if balance is enough user gets a transaction successful message
+    console.log(senderUid, receiverUid, user);
+
+    await transferFunds(senderUid, receiverUid, amount);
     console.log("The mount has been sent");
   };
 

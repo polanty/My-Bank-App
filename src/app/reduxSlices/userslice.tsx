@@ -3,8 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface initialstateInterface {
   readonly currentUser: {
     email: string;
-    password: string;
+    uid: string;
     displayName: string;
+    isactive: boolean;
   } | null;
   readonly testselector: { email: string; password: string } | null;
   readonly loading: boolean;

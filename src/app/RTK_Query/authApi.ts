@@ -7,15 +7,18 @@ import {
 } from "../Firebase/Firebase";
 
 //Transaction Object interface
+// src/types/index.ts or src/types/transactions.ts
 export interface transacs {
-  AccountNumber: number;
-  AccountName: string;
-  type: string;
+  counterparty: string;
+  date: string;
+  description: string;
   amount: number;
-  Date: Date;
+  type: "credit" | "debit";
+  counterpartyAccount: string;
 }
 
 export interface initialUserData {
+  uid: string;
   displayName: string;
   email: string; // You might store email here for easy lookup, but Auth is source of truth
   accountNumber: string;
@@ -35,7 +38,12 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     //Sign Up mutations
     signup: builder.mutation<
-      { uid: string; email: string; displayName: string | null },
+      {
+        uid: string;
+        email: string;
+        displayName: string;
+        isactive: boolean;
+      },
       { email: string; password: string; displayName: string }
     >({
       async queryFn({ email, password, displayName }) {
@@ -50,6 +58,7 @@ export const authApi = createApi({
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
+              isactive: user.isactive,
             },
           };
         } catch (error: any) {
@@ -60,17 +69,19 @@ export const authApi = createApi({
 
     //Sign In mutations
     signin: builder.mutation<
-      { uid: string; email: string; displayName: string },
+      { uid: string; email: string; displayName: string; isactive: boolean },
       { email: string; password: string }
     >({
       async queryFn({ email, password }) {
         try {
           const user = await signInUserUsingEmailandPassword(email, password);
+
           return {
             data: {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
+              uid: user?.uid,
+              email: user?.email,
+              displayName: user?.displayName,
+              isactive: user?.isactive,
             },
           };
         } catch (error: any) {

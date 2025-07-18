@@ -272,9 +272,10 @@ export async function createNewUserWithData(
 
     console.log("New user created and data initialized in Firestore:", userId);
     return {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
+      uid: userId,
+      email: initialUserData.email,
+      displayName: initialUserData.displayName,
+      isactive: initialUserData.isactive,
     }; // Return the created user object
   } catch (error) {
     console.error("Error creating new user or initializing data:", error);
@@ -289,11 +290,49 @@ export async function signInUserUsingEmailandPassword(email, password) {
 
     const user = userdetails.user;
 
-    return {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-    };
+    const userId = user.uid;
+
+    // Fetch additional user info from Firestore (assuming you store isactive there)
+    const userDocRef = doc(db, "users", userId); // Firestore path: users/{uid}
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+
+      const data = docSnap.data();
+
+      // 🔁 Convert Firestore Timestamp fields to ISO strings for Redux compatibility
+      const transactions = (data.Transactions || []).map((tx) => ({
+        ...tx,
+        Date:
+          tx.Date instanceof Timestamp
+            ? tx.Date.toDate().toISOString()
+            : tx.Date ?? null,
+      }));
+
+      const initialUserData = {
+        uid: userId,
+        displayName: data.displayName || "",
+        email: data.email || "",
+        accountNumber: data.accountNumber,
+        createdAt:
+          data.createdAt instanceof Timestamp
+            ? data.createdAt.toDate().toISOString()
+            : new Date().toISOString(), // fallback
+        Transactions: transactions,
+        settings: data.settings || { theme: "light" },
+        isactive: data.isactive ?? true,
+        Bonus: data.Bonus ?? 0,
+        Balance: data.Balance ?? 0,
+      };
+
+      return { ...initialUserData };
+
+      // return docSnap.data();
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
@@ -361,7 +400,7 @@ export const getUserByAccountNumber = async (accountNumber) => {
   const q = query(usersRef, where("accountNumber", "==", accountNumber));
 
   const querySnapshot = await getDocs(q);
-  console.log(querySnapshot);
+  // console.log(querySnapshot);
   if (querySnapshot.empty) {
     console.log("No matching documents.");
     return null;
@@ -381,6 +420,7 @@ export const getUserByAccountNumber = async (accountNumber) => {
   }));
 
   const initialUserData = {
+    uid: doc.id, // ✅ Add this line
     displayName: data.displayName || "",
     email: data.email || "",
     accountNumber: data.accountNumber,
@@ -399,17 +439,6 @@ export const getUserByAccountNumber = async (accountNumber) => {
 
   // return { id: doc.id, ...doc.data() };
 };
-
-//Code to update the balance after transactions
-// transactions.legth > 0  ? transactions.reduce((sum, tx) => {
-//       if (tx.type.toLowerCase() === "credit") {
-//         return sum + tx.amount;
-//       } else {
-//         return sum - tx.amount;
-//       }
-//     }, bonus)
-
-//Firestore Transaction to Add a Transaction and Update Balance
 
 export const addTransactionAndUpdateBalance = async (userId, newTx) => {
   const userRef = doc(db, "users", userId);
@@ -492,7 +521,8 @@ export const transferFunds = async (
         type: "debit",
         description: description || `Transfer to ${receiverData.displayName}`,
         date: isoDate,
-        counterparty: receiverData.accountNumber,
+        counterparty: receiverData.displayName,
+        counterpartyAccount: receiverData.accountNumber,
       };
 
       const creditTransaction = {
@@ -500,18 +530,26 @@ export const transferFunds = async (
         type: "credit",
         description: description || `Received from ${senderData.displayName}`,
         date: isoDate,
-        counterparty: senderData.accountNumber,
+        counterparty: senderData.displayName,
+        counterpartyAccount: receiverData.accountNumber,
       };
+
+      //Check if the sender account is active or deactivated
+      if (!senderData.isactive) {
+        throw new Error(
+          "Unable to perform this operation : Your account is Locked,\n please contact your Account Manager"
+        );
+      }
 
       // Update sender
       transaction.update(senderRef, {
-        Balance: senderData.Balance - amount,
+        Balance: senderData.Balance - parseInt(amount),
         Transactions: arrayUnion(debitTransaction),
       });
 
       // Update receiver
       transaction.update(receiverRef, {
-        Balance: receiverData.Balance + amount,
+        Balance: receiverData.Balance + parseInt(amount),
         Transactions: arrayUnion(creditTransaction),
       });
     });
