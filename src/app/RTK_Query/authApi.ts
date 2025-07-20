@@ -10,7 +10,7 @@ import {
 // src/types/index.ts or src/types/transactions.ts
 export interface transacs {
   counterparty: string;
-  date: string;
+  Date: string | { toDate: () => Date }; // Accepts both Firestore Timestamp or ISO string
   description: string;
   amount: number;
   type: "credit" | "debit";

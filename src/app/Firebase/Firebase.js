@@ -512,6 +512,11 @@ export const transferFunds = async (
         throw new Error("Insufficient funds");
       }
 
+      if (senderData.AccountNumber === receiverData.accountNumber) {
+        throw new Error(
+          "Unauthorized Transaction, you are unable to send money to yourself🤣"
+        );
+      }
       // Create timestamp and serialize it
       const isoDate = Timestamp.now().toDate().toISOString();
 
@@ -520,7 +525,7 @@ export const transferFunds = async (
         amount,
         type: "debit",
         description: description || `Transfer to ${receiverData.displayName}`,
-        date: isoDate,
+        Date: isoDate,
         counterparty: receiverData.displayName,
         counterpartyAccount: receiverData.accountNumber,
       };
@@ -529,9 +534,9 @@ export const transferFunds = async (
         amount,
         type: "credit",
         description: description || `Received from ${senderData.displayName}`,
-        date: isoDate,
+        Date: isoDate,
         counterparty: senderData.displayName,
-        counterpartyAccount: receiverData.accountNumber,
+        counterpartyAccount: senderData.accountNumber,
       };
 
       //Check if the sender account is active or deactivated

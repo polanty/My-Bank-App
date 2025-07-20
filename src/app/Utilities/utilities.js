@@ -80,28 +80,27 @@ export const generateYearMonthArray = (startDate) => {
   return yearData;
 };
 
-export const targetMonthPDF = (transactions, month) => {
-  return transactions.filter((trans) => {
-    const dateString = trans.Date;
-    const date = new Date(dateString);
+export const filterByMonthYear = (data, month, year) => {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    const monthString = monthNames[date.getUTCMonth()];
-
-    return month.toLowerCase() === monthString.toLowerCase();
+  return data.filter((item) => {
+    const date = new Date(item.Date);
+    return (
+      date.getUTCFullYear() === parseInt(year) &&
+      monthNames[date.getUTCMonth()].toLowerCase() === month.toLowerCase()
+    );
   });
 };

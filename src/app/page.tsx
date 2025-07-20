@@ -11,7 +11,6 @@ import {
 import { useSelector } from "react-redux";
 import { initialstateInterface } from "./reduxSlices/userslice";
 import { RootState } from "./store/store";
-import UserPDFLib from "./components/UserPDF/UserPDF";
 
 export default function Home() {
   //useAuthListener();
@@ -63,26 +62,26 @@ export default function Home() {
     }
   };
 
-  const mockUser = {
-    displayName: "Tom",
-    email: "testing3@gmail.com",
-    accountNumber: "1000000005",
-    Balance: 188800,
-    Transactions: [
-      {
-        amount: 20000,
-        type: "credit",
-        description: "Salary",
-        date: new Date().toISOString(),
-      },
-      {
-        amount: 12000,
-        type: "debit",
-        description: "Airtime purchase",
-        date: new Date().toISOString(),
-      },
-    ],
-  };
+  // const mockUser = {
+  //   displayName: "Tom",
+  //   email: "testing3@gmail.com",
+  //   accountNumber: "1000000005",
+  //   Balance: 188800,
+  //   Transactions: [
+  //     {
+  //       amount: 20000,
+  //       type: "credit",
+  //       description: "Salary",
+  //       date: new Date().toISOString(),
+  //     },
+  //     {
+  //       amount: 12000,
+  //       type: "debit",
+  //       description: "Airtime purchase",
+  //       date: new Date().toISOString(),
+  //     },
+  //   ],
+  // };
 
   return (
     <div className="flex flex-row justify-center">
@@ -147,7 +146,6 @@ export default function Home() {
         >
           Sign Up
         </button>
-        <UserPDFLib user={mockUser} />
       </main>
     </div>
   );
