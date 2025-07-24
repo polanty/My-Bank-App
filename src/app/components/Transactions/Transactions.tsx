@@ -48,7 +48,7 @@ const TransactionsPage = () => {
                 <td>{tx.counterparty}</td>
                 <td>{tx.counterpartyAccount}</td>
                 <td>{tx.type}</td>
-                {/* <td>{tx.Date}</td> */}
+                <td>{tx.Date}</td>
                 <td>${tx.amount.toLocaleString()}</td>
               </tr>
             ))}

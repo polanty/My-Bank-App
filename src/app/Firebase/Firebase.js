@@ -493,6 +493,12 @@ export const transferFunds = async (
   amount,
   description = "The money has gone through"
 ) => {
+  if (senderId === receiverId) {
+    throw new Error(
+      "Unauthorized Transaction, you are unable to send money to yourself🤣"
+    );
+  }
+
   const senderRef = doc(db, "users", senderId);
   const receiverRef = doc(db, "users", receiverId);
 
@@ -512,11 +518,6 @@ export const transferFunds = async (
         throw new Error("Insufficient funds");
       }
 
-      if (senderData.AccountNumber === receiverData.accountNumber) {
-        throw new Error(
-          "Unauthorized Transaction, you are unable to send money to yourself🤣"
-        );
-      }
       // Create timestamp and serialize it
       const isoDate = Timestamp.now().toDate().toISOString();
 
@@ -563,5 +564,23 @@ export const transferFunds = async (
   } catch (e) {
     console.error("Transfer failed: ", e.message);
     throw e;
+  }
+};
+
+export const currencyConverter = async (from, to, amount) => {
+  const CurrencyConverterKey = process.env.NEXT_PUBLIC_CURRENCY_CONVERTER;
+
+  const url = `https://v6.exchangerate-api.com/v6/${CurrencyConverterKey}/pair/${from}/${to}/${amount}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.conversion_result; // This will return the converted amount
+  } catch (error) {
+    console.error("Currency conversion failed:", error);
+    return null;
   }
 };

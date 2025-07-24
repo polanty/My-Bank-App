@@ -16,10 +16,10 @@ export default function SideNav() {
         DirectDebit
       </Link>
       <Link
-        href="/userprofile/Overdraft"
+        href="/userprofile/Converter"
         className="bg-black text-white px-3 py-2 "
       >
-        Overdraft
+        Converter
       </Link>
       <Link
         href="/userprofile/Statements"

@@ -17,23 +17,6 @@ export default function UserProfile() {
     }
   }, [currentUser, router]);
 
-  // useEffect(() => {
-  //   const fetchTransactions = async () => {
-  //     try {
-  //       const userTransactions = await getUserTransactions(currentUser?.uid);
-  //       console.log(userTransactions);
-  //       // Optionally, set it to state
-  //       // setTransactions(userTransactions);
-  //     } catch (error) {
-  //       console.error("Failed to fetch transactions:", error);
-  //     }
-  //   };
-
-  //   if (currentUser?.uid) {
-  //     fetchTransactions();
-  //   }
-  // }, [currentUser?.uid]);
-
   //1) Display user profile UI  - availaible balance
 
   // i) every user should able to send and receive transactions

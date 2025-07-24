@@ -64,7 +64,11 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-1: rgb(210, 97, 35);
+  /* similar one yet - rgb(210, 97, 35); */
+  /* rgb(221, 79, 5) */
+  --primary-color: rgb(195, 80, 31);
+  /* oklch(0.646 0.222 41.116); */
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
@@ -115,9 +119,118 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
   body {
     @apply bg-background text-foreground;
   }
 }
+
+.button-primary,
+.button-secondary {
+  background-color: var(--chart-1);
+  color: white;
+  display: inline-block;
+  padding: 0.75rem 1.5rem; /* Add horizontal padding */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  font-weight: 500; /* Slightly bolder for CTA */
+  letter-spacing: 1px;
+  text-align: center;
+  text-decoration: none; /* Ensure it doesn't inherit link styling */
+
+  transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+    background-color 0.3s ease;
+}
+
+.button-primary:hover {
+  background-color: var(--primary-color);
+  opacity: 0.9;
+}
+
+/* Ensure anchor/link styling doesn’t interfere */
+.button-primary:visited,
+.button-primary:focus,
+.button-primary:active {
+  color: white;
+  text-decoration: none;
+}
+
+/* Optionally for consistent layout */
+.nav-link.btn.button-primary {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button-secondary {
+  background-color: var(--background);
+  color: black;
+  border: 1px solid #ccc;
+  font-weight: 300;
+}
+
+.button-primary:hover,
+.button-secondary:hover {
+  background-color: var(--primary-color);
+  opacity: 0.9;
+  border: none;
+}
+
+/* Form control */
+input {
+  outline: none;
+}
+
+input,
+input:focus,
+input:active {
+  outline: none;
+}
+
+input,
+input:focus,
+input:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.carousel {
+  height: 70vh;
+}
+
+.carousel-inner {
+  height: 100%;
+}
+
+.carousel-item {
+  max-height: 100%;
+}
+
+.Courasel-element {
+  position: relative;
+  height: 70vh;
+}
+
+.Search_form {
+  margin-right: 0.5rem;
+  outline: none;
+}
+
+.Search_form:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: inherit;
+}
+
+.Search_form:focus {
+  outline: 2px solid var(--primary-color); /* or any other high-contrast color */
+  /* outline-offset: 2px; */
+}
+
+/* .CustomImage {
+  width: 100%;
+  height: 100%;
+} */

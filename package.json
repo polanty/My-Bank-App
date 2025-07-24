@@ -13,7 +13,10 @@
     "@radix-ui/react-navigation-menu": "^1.2.13",
     "@reduxjs/toolkit": "^2.8.2",
     "bootstrap": "^5.3.7",
+    "country-currency-map": "^2.1.7",
+    "country-list": "^2.3.0",
     "firebase": "^11.9.0",
+    "gsap": "^3.13.0",
     "jspdf": "^3.0.1",
     "next": "15.3.3",
     "pdf-lib": "^1.17.1",
@@ -21,6 +24,7 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
+    "react-select": "^5.10.2",
     "tw-animate-css": "^1.3.4",
     "zod": "^3.25.67"
   },
