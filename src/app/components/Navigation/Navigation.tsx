@@ -4,7 +4,6 @@ import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { signUserOut } from "@/app/Firebase/Firebase";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-// import { initialstateInterface } from "@/app/reduxSlices/userslice";
 import { RootState } from "@/app/store/store";
 import { setLoading } from "@/app/reduxSlices/userslice";
 import Link from "next/link";

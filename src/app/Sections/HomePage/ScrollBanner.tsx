@@ -1,11 +1,11 @@
 import { Container } from "react-bootstrap";
 import { CustomImage } from "@/app/components/Images/CustomImage";
-import AnimatedImageScroll from "@/app/components/Animation/ImageScrollIn/ImageScrollIn";
 
-const PhoneSection = () => {
+const ScrollBanner = () => {
   return (
-    <section className="w-screen bg-neutral-200 p-10 ">
-      <Container className="bg-neutral-200 p-10  rounded-xl">
+    <section className="w-screen bg-white p-10 ">
+      {/* <Container className="bg-red-500 p-10  rounded-xl"> */}
+      <div className="container-sm bg-red-700 rounded-4xl p-4">
         <div className="h-[70vh] grid grid-cols-2 grid-rows-1">
           <div className="h-full flex items-center  justify-center">
             <div>
@@ -19,12 +19,12 @@ const PhoneSection = () => {
             </div>
           </div>
 
-          {/* <CustomImage text="" src="/images/Mobile1.png" /> */}
-          <AnimatedImageScroll src="/images/Mobile1.png" />
+          <CustomImage text="" src="/images/Mobile1.png" />
         </div>
-      </Container>
+      </div>
+      {/* </Container> */}
     </section>
   );
 };
 
-export default PhoneSection;
+export default ScrollBanner;

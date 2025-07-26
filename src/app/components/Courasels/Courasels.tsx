@@ -27,7 +27,7 @@ const ControlledCarousel = () => {
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <ExampleCarouselImage text="" src="/images/Mortgage.png" />
+        <ExampleCarouselImage text="" src="/images/Ego_Brand.png" />
         <Carousel.Caption>
           <h3></h3>
           <p></p>

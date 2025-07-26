@@ -34,6 +34,8 @@ export default function AuthPage() {
     password: "",
   });
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -52,7 +54,6 @@ export default function AuthPage() {
         const user = await signup(formData).unwrap();
 
         dispatch(login(user)); // save user to redux
-        //router.push("/userprofile");
 
         console.log("User signed up:", user);
       } else {
@@ -60,33 +61,19 @@ export default function AuthPage() {
         const user = await signin(formData).unwrap();
 
         dispatch(login(user));
-        //router.push("/userprofile");
 
         console.log("Signed In,", user);
       }
     } catch (err) {
+      setAuthError(err?.message || "Authentication failed");
       console.error("Signup error:", err);
       dispatch(setLoading(false));
     }
   };
 
-  if (loading) {
+  if (currentUser !== null) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Signing you in...</span>
-        </Spinner>
-      </div>
-    );
-  } else if (currentUser !== null) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
+      <div className="text-center space-y-4" style={{ height: "100vh" }}>
         <Spinner animation="border" role="status" variant="primary">
           <span className="visually-hidden">Signing you in...</span>
         </Spinner>
@@ -129,7 +116,7 @@ export default function AuthPage() {
               name="email"
               value={formData.email} //formData.email
               onChange={handleChange}
-              // required
+              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
@@ -143,16 +130,13 @@ export default function AuthPage() {
               name="password"
               value={formData.password} //formData.password
               onChange={handleChange}
-              // required
+              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
-          {/* <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </button> */}
+
+          {authError && <p className="text-red-600 text-sm">{authError}</p>}
+
           <button
             type="submit"
             disabled={signinLoading || signupLoading}

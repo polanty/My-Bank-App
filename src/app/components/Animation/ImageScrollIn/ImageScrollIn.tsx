@@ -52,6 +52,7 @@ const AnimatedImageScroll = ({
         src={src}
         alt={alt}
         className="object-contain mx-auto"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         fill
         priority
       />
