@@ -20,15 +20,15 @@ const Navigation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Link className="nav-link" href="/Pages/Personal">
+            <Nav.Link as={Link} href="/Pages/Personal">
               Personal
-            </Link>
-            <Link className="nav-link" href="/Pages/Business">
+            </Nav.Link>
+            <Nav.Link as={Link} href="/Pages/Business">
               Business
-            </Link>
-            <Link className="nav-link" href="/Pages/About">
+            </Nav.Link>
+            <Nav.Link as={Link} href="/Pages/About">
               About Us
-            </Link>
+            </Nav.Link>
           </Nav>
           <Nav>
             <Form className="d-flex mr-6">
