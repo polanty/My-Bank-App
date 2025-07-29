@@ -67,7 +67,8 @@
   --chart-1: rgb(210, 97, 35);
   /* similar one yet - rgb(210, 97, 35); */
   /* rgb(221, 79, 5) */
-  --primary-color: rgb(195, 80, 31);
+  --primary-color: rgb(217, 86, 0);
+  --primary-color2: #ff5500;
   /* oklch(0.646 0.222 41.116); */
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -243,4 +244,16 @@ input:active {
 .navbar-nav .nav-link:focus {
   color: #333; /* Optional: darker text for contrast */
   border-bottom: 2px solid var(--primary-color);
+}
+
+.bg-root {
+  background-color: var(--primary-color);
+  width: 100%;
+  padding: 1rem;
+}
+
+.small-text {
+  font-size: 0.6rem;
+  text-decoration: underline;
+  margin-bottom: 0;
 }

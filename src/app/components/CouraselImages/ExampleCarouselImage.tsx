@@ -13,7 +13,7 @@ export const ExampleCarouselImage = ({ text, src, alt }: Props) => {
       <Image
         src={src}
         alt={alt || text}
-        style={{ backgroundColor: "var(--chart-1)" }}
+        style={{ backgroundColor: "var(--primary-color)" }}
         className="object-contain mx-auto"
         fill
         // className="object-contain object-center"

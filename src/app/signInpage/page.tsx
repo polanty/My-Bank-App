@@ -3,6 +3,8 @@
 import { useSignupMutation, useSigninMutation } from "../RTK_Query/authApi";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Container, Navbar } from "react-bootstrap";
+import Image from "next/image";
 import { initialstateInterface } from "../reduxSlices/userslice";
 import { RootState } from "../store/store";
 import { login, setLoading } from "../reduxSlices/userslice";
@@ -84,83 +86,107 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 space-y-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          {isSignUp ? "Create an Account" : "Sign In to Your Account"}
-        </h2>
+    <main>
+      {/* className="flex items-center justify-center min-h-screen bg-gray-100 p-4" */}
+      <div className="bg-root">
+        <Container>
+          <div className="flex justify-between">
+            <Navbar.Brand href="/" className="flex items-center gap-2 p-2">
+              <Image
+                src="/Logo_white.png"
+                alt="Ego Bank Logo"
+                width={70}
+                height={70}
+                priority
+              />
+            </Navbar.Brand>
+            <div className="border border-white text-sm text-white font-bold p-2">
+              <p>You're logging into a secure site</p>
+              <p className="small-text">
+                How can I tell that this site is secure?
+              </p>
+            </div>
+          </div>
+        </Container>
+      </div>
+      <Container>
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 space-y-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800">
+            {isSignUp ? "Create an Account" : "Sign In to Your Account"}
+          </h2>
 
-        <form onSubmit={handleFormSubmit} className="space-y-4">
-          {isSignUp && (
+          <form onSubmit={handleFormSubmit} className="space-y-4">
+            {isSignUp && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  name="displayName"
+                  value={formData.displayName}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
+                />
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Display Name
+                Email
               </label>
               <input
-                type="text"
-                name="displayName"
-                value={formData.displayName}
+                type="email"
+                name="email"
+                value={formData.email} //formData.email
                 onChange={handleChange}
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
               />
             </div>
-          )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email} //formData.email
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password} //formData.password
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password} //formData.password
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
-            />
-          </div>
+            {authError && <p className="text-red-600 text-sm">{authError}</p>}
 
-          {authError && <p className="text-red-600 text-sm">{authError}</p>}
+            <button
+              type="submit"
+              disabled={signinLoading || signupLoading}
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              {signinLoading || signupLoading
+                ? "Submitting..."
+                : isSignUp
+                ? "Sign Up"
+                : "Sign In"}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={signinLoading || signupLoading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            {signinLoading || signupLoading
-              ? "Submitting..."
-              : isSignUp
-              ? "Sign Up"
-              : "Sign In"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-600">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-          <button
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-blue-600 font-medium hover:underline"
-          >
-            {isSignUp ? "Sign In" : "Sign Up"}
-          </button>
-        </p>
-      </div>
+          <p className="text-center text-sm text-gray-600">
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-blue-600 font-medium hover:underline"
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </button>
+          </p>
+        </div>
+      </Container>
     </main>
   );
 }
