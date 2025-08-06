@@ -44,10 +44,17 @@ const TransactionsPage = () => {
   //{ data: userTransactionData, isLoading: transactiopnqueryLoading2 }
 
   useEffect(() => {
-    try {
-      testData(CurrentUserUid, 1, 10);
-    } catch (error) {
-      console.log(error);
+    const fetchData = async () => {
+      try {
+        const test = await testData(CurrentUserUid, 2, 10);
+        console.log(test);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (CurrentUserUid) {
+      fetchData();
     }
   }, [CurrentUserUid]);
 
