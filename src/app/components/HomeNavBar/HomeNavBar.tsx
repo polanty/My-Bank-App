@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const Navigation = () => {
   return (
-    <Navbar expand="lg" className="bg-white">
+    <Navbar expand="lg" className="font-medium bg-white">
       <Container>
         <Navbar.Brand href="/" className="flex items-center gap-2 p-2">
           <Image

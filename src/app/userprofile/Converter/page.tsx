@@ -1,11 +1,20 @@
 "use client";
-
+import { useState } from "react";
 import { useConvertCurrencyQuery } from "@/app/RTK_Query/Converter";
-import { CurrencyConverter } from "@/app/components/Countries/CountriesList";
+import CountryForm from "@/app/components/Countries/CountriesList";
+
+export const countries = [
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "NG", name: "Nigeria" },
+  // Add more as needed
+];
 
 const Converter = () => {
+  const [currency, setCurrency] = useState("USD");
+
   const { data, error, isLoading } = useConvertCurrencyQuery({
-    from: "USD",
+    from: currency,
     to: "GBP",
     amount: 1000,
   });
@@ -17,8 +26,9 @@ const Converter = () => {
     <div>
       <h1>The Api to check currency conversion rates</h1>
       <p>Converted Amount: {data?.conversion_result}</p>
-
-      {/* <CurrencyConverter /> */}
+      <div>
+        <CountryForm />
+      </div>
     </div>
   );
 };

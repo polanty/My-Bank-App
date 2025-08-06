@@ -6,7 +6,12 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        cormorant: "'var(--font-cormorant-garamond)",
+        sans: "var(--font-sans)",
+      },
+    },
   },
   plugins: [],
   future: {

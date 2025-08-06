@@ -16,7 +16,6 @@ export const ExampleCarouselImage = ({ text, src, alt }: Props) => {
         style={{ backgroundColor: "var(--primary-color)" }}
         className="object-contain mx-auto"
         fill
-        // className="object-contain object-center"
         priority
       />
       <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white p-4 text-center text-lg md:text-xl">

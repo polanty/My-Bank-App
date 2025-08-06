@@ -4,6 +4,7 @@ import {
   createNewUserWithData,
   signInUserUsingEmailandPassword,
   getUserTransactions,
+  getUserTransactions3,
 } from "../Firebase/Firebase";
 
 //Transaction Object interface
@@ -31,6 +32,13 @@ export interface initialUserData {
   Balance: number;
   // ... other user-specific fields you need
 }
+
+// Define your input type
+type PaginationRequest = {
+  uid: string;
+  page: number;
+  limit: number;
+};
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -101,6 +109,20 @@ export const authApi = createApi({
         }
       },
     }),
+
+    getUserTransactions3: builder.query<
+      { transactions: transacs[]; total: number },
+      { uid: string; page: number; limit: number }
+    >({
+      queryFn: async ({ uid, page, limit }) => {
+        try {
+          const user = await getUserTransactions3(uid, page, limit); // Updated to handle pagination
+          return { data: user };
+        } catch (error: any) {
+          return { error: { status: "CUSTOM_ERROR", error: error.message } };
+        }
+      },
+    }),
   }),
 });
 
@@ -108,4 +130,5 @@ export const {
   useSignupMutation,
   useSigninMutation,
   useGetUserTransactionsQuery,
+  useGetUserTransactions3Query,
 } = authApi;

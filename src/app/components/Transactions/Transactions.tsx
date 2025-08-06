@@ -1,8 +1,15 @@
 "use client";
-import { useGetUserTransactionsQuery } from "@/app/RTK_Query/authApi";
+
+import {
+  useGetUserTransactionsQuery,
+  useGetUserTransactions3Query,
+} from "@/app/RTK_Query/authApi";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useState, useEffect } from "react";
 import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
 import { initialstateInterface } from "@/app/reduxSlices/userslice";
+import { testData } from "@/app/Firebase/Firebase";
 
 const TransactionsPage = () => {
   const { currentUser } = useSelector(
@@ -18,6 +25,31 @@ const TransactionsPage = () => {
   } = useGetUserTransactionsQuery(CurrentUserUid!, {
     skip: !CurrentUserUid,
   });
+
+  // const [page, setPage] = useState(1);
+  // const limit = 10;
+
+  // const userTransactionData = useGetUserTransactions3Query(
+  //   CurrentUserUid
+  //     ? {
+  //         uid: CurrentUserUid, // ✅ use correct key
+  //         page,
+  //         limit,
+  //       }
+  //     : skipToken
+  // );
+
+  // console.log(userTransactionData);
+
+  //{ data: userTransactionData, isLoading: transactiopnqueryLoading2 }
+
+  useEffect(() => {
+    try {
+      testData(CurrentUserUid, 1, 10);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [CurrentUserUid]);
 
   if (isLoading)
     return (
@@ -60,20 +92,27 @@ const TransactionsPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
-              {user.Transactions.map((tx, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 text-gray-700">{tx.counterparty}</td>
-                  <td className="px-4 py-2 text-gray-700">
-                    {tx.counterpartyAccount}
-                  </td>
-                  <td className="px-4 py-2 text-gray-600 capitalize">
-                    {tx.type}
-                  </td>
-                  <td className="px-4 py-2 text-gray-900 font-medium">
-                    ₤{tx.amount.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
+              {user.Transactions.map(
+                (
+                  tx,
+                  i //user.Transactions
+                ) => (
+                  <tr key={i} className="hover:bg-gray-50">
+                    <td className="px-4 py-2 text-gray-700">
+                      {tx.counterparty}
+                    </td>
+                    <td className="px-4 py-2 text-gray-700">
+                      {tx.counterpartyAccount}
+                    </td>
+                    <td className="px-4 py-2 text-gray-600 capitalize">
+                      {tx.type}
+                    </td>
+                    <td className="px-4 py-2 text-gray-900 font-medium">
+                      ₤{tx.amount.toLocaleString()}
+                    </td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>

@@ -12,6 +12,8 @@ import {
   setDoc,
   getDoc,
   where,
+  orderBy,
+  limit as fbLimit,
   getFirestore,
   query,
   collection,
@@ -583,4 +585,65 @@ export const currencyConverter = async (from, to, amount) => {
     console.error("Currency conversion failed:", error);
     return null;
   }
+};
+
+// Note: Firestore doesn’t use startAt(startIndex) by numeric index directly—if you want precise pagination, you’ll typically use document snapshots or timestamps for cursors.
+
+let lastVisibleDocs = {};
+
+export const getUserTransactions3 = async (uid, page, limit) => {
+  const transactionsRef = collection(db, `users/${uid}/transactions`);
+
+  let q = query(transactionsRef, orderBy("Date", "desc"), fbLimit(limit));
+
+  console.log(q);
+
+  const prevDocs = lastVisibleDocs[uid] || [];
+
+  if (page > 1 && prevDocs[page - 2]) {
+    q = query(
+      transactionsRef,
+      orderBy("Date", "desc"),
+      startAfter(prevDocs[page - 2]),
+      fbLimit(limit)
+    );
+  }
+
+  const snapshot = await getDocs(q);
+  const docs = snapshot.docs.map((doc) => doc.data());
+  lastVisibleDocs[uid] = [...prevDocs, snapshot.docs[snapshot.docs.length - 1]];
+
+  // Optional: get total count
+  const totalSnapshot = await getDocs(query(transactionsRef));
+  const total = totalSnapshot.size;
+
+  return {
+    transactions: docs,
+    total,
+  };
+};
+
+export const testData = async (uid, page, limit) => {
+  const userDocRef = doc(db, "users", uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (!userDocSnap.exists()) {
+    throw new Error("User not found");
+  }
+
+  const allTransactions = userDocSnap.data().Transactions || [];
+
+  // Optional: sort by Date descending
+  const sortedTransactions = allTransactions.sort(
+    (a, b) => new Date(b.Date) - new Date(a.Date)
+  );
+
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  const paginated = sortedTransactions.slice(start, end);
+
+  return {
+    transactions: paginated,
+    total: allTransactions.length,
+  };
 };
