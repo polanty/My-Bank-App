@@ -13,6 +13,12 @@ export default function Home() {
         <ControlledCarousel />
         <PhoneSection />
         <ScrollBanner />
+        {
+          // Customer support page
+          //Your credit score
+          //Independent Service quality survey results
+          //Footer
+        }
       </main>
     </div>
   );
