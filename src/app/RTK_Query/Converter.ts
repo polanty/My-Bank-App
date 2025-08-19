@@ -4,13 +4,14 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const CurrencyConverterKey = process.env.NEXT_PUBLIC_CURRENCY_CONVERTER;
 
 export interface Latest {
-  result: string;
-  time_last_update_utc: string | { toDate: () => Date }; // Accepts both Firestore Timestamp or ISO string
-  base_code: string;
-  amount: number;
-  conversion_rates: {
-    string: number;
-  };
+  result?: string;
+  time_last_update_utc?: string | { toDate: () => Date }; // Accepts both Firestore Timestamp or ISO string
+  base_code?: string;
+  amount?: number;
+  conversion_rates?: Record<string, number>;
+  // conversion_rates: {
+  //   string: number;
+  // };
 }
 
 export const currencyApi = createApi({

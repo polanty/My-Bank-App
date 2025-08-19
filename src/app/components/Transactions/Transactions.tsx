@@ -16,47 +16,51 @@ const TransactionsPage = () => {
     (state: RootState): initialstateInterface => state.user
   );
 
+  console.log(currentUser);
+
   const CurrentUserUid = currentUser?.uid;
+
+  // const {
+  //   data: user,
+  //   isLoading,
+  //   error,
+  // } = useGetUserTransactionsQuery(CurrentUserUid!, {
+  //   skip: !CurrentUserUid,
+  // });
+
+  const [pageNumber, setPageNumber] = useState(1);
 
   const {
     data: user,
     isLoading,
     error,
-  } = useGetUserTransactionsQuery(CurrentUserUid!, {
-    skip: !CurrentUserUid,
-  });
-
-  // const [page, setPage] = useState(1);
-  // const limit = 10;
-
-  // const userTransactionData = useGetUserTransactions3Query(
-  //   CurrentUserUid
-  //     ? {
-  //         uid: CurrentUserUid, // ✅ use correct key
-  //         page,
-  //         limit,
-  //       }
-  //     : skipToken
-  // );
-
-  // console.log(userTransactionData);
-
-  //{ data: userTransactionData, isLoading: transactiopnqueryLoading2 }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const test = await testData(CurrentUserUid, 2, 10);
-        console.log(test);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (CurrentUserUid) {
-      fetchData();
+  } = useGetUserTransactions3Query(
+    {
+      uid: CurrentUserUid as string,
+      page: pageNumber,
+      limit: 10,
+    },
+    {
+      skip: !CurrentUserUid,
     }
-  }, [CurrentUserUid]);
+  );
+
+  // console.log(user);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const test = await testData(CurrentUserUid, 2, 10);
+  //       console.log(test);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   if (CurrentUserUid) {
+  //     fetchData();
+  //   }
+  // }, [CurrentUserUid]);
 
   if (isLoading)
     return (
@@ -128,6 +132,24 @@ const TransactionsPage = () => {
           You have no transactions
         </p>
       )}
+
+      <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+        <button
+          onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
+          disabled={pageNumber === 1}
+        >
+          Previous
+        </button>
+
+        <span>Page {pageNumber}</span>
+
+        <button
+          onClick={() => setPageNumber((prev) => prev + 1)}
+          disabled={!user || user.total < 10} // disable if fewer than 10 results
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

@@ -4,7 +4,9 @@ import { useConvertCurrencyLatestQuery } from "@/app/RTK_Query/Converter";
 
 export const countries = [
   { code: "USD", name: "United States" },
-  // { code: "GBP", name: "United Kingdom" },
+  { code: "AUD", name: "Australia" },
+  { code: "EUR", name: "Euro" },
+  { code: "CHF", name: "Swiss franc" },
   { code: "NGN", name: "Nigeria" },
   // Add more as needed
 ];
@@ -19,12 +21,15 @@ const CountryForm = () => {
   const [country1, setCountry1] = useState("GBP");
   const [country2, setCountry2] = useState("USD");
 
+  const rateFrom = requiredConversionDetails?.conversion_rates?.[country1] ?? 1;
+  const rateTo = requiredConversionDetails?.conversion_rates?.[country2] ?? 1;
+
   // field1: requiredConversionDetails?.conversion_rates[country1],
   // field2: requiredConversionDetails?.conversion_rates[country2],
 
   const [formData, setFormData] = useState({
-    field1: parseFloat(country1),
-    field2: parseFloat(country2),
+    field1: rateFrom,
+    field2: rateTo,
     country1: "GBP",
     country2: "USD",
   });

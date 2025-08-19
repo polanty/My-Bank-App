@@ -5,6 +5,7 @@ import {
   signInUserUsingEmailandPassword,
   getUserTransactions,
   getUserTransactions3,
+  testData,
 } from "../Firebase/Firebase";
 
 //Transaction Object interface
@@ -111,12 +112,12 @@ export const authApi = createApi({
     }),
 
     getUserTransactions3: builder.query<
-      { transactions: transacs[]; total: number },
+      { Transactions: transacs[]; total: number },
       { uid: string; page: number; limit: number }
     >({
       queryFn: async ({ uid, page, limit }) => {
         try {
-          const user = await getUserTransactions3(uid, page, limit); // Updated to handle pagination
+          const user = await testData(uid, page, limit); // Updated to handle pagination
           return { data: user };
         } catch (error: any) {
           return { error: { status: "CUSTOM_ERROR", error: error.message } };

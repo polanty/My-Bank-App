@@ -643,7 +643,7 @@ export const testData = async (uid, page, limit) => {
   const paginated = sortedTransactions.slice(start, end);
 
   return {
-    transactions: paginated,
+    Transactions: paginated,
     total: allTransactions.length,
   };
 };
