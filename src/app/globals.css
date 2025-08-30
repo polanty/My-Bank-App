@@ -262,3 +262,31 @@ input:active {
   text-decoration: underline;
   margin-bottom: 0;
 }
+
+/* Gsap Courasel styling  for Home page scroll section*/
+#smooth-wrapper {
+  height: 100%;
+  overflow: hidden;
+}
+
+#smooth-content {
+  will-change: transform;
+}
+
+.spacer,
+.card-containers {
+  width: 100%;
+  min-height: 100%;
+}
+
+.card-containers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stacked-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
