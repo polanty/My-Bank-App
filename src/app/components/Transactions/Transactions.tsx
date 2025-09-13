@@ -20,7 +20,7 @@ const TransactionsPage = () => {
 
   const CurrentUserUid = currentUser?.uid;
 
-  // const {
+  // const { .
   //   data: user,
   //   isLoading,
   //   error,

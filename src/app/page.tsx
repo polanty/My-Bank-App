@@ -4,6 +4,8 @@ import HomeNavBar from "./components/HomeNavBar/HomeNavBar";
 import ControlledCarousel from "./components/Courasels/Courasels";
 import PhoneSection from "./Sections/HomePage/Phone.Section";
 import ScrollBanner from "./Sections/HomePage/ScrollBanner";
+import Survey from "./Sections/HomePage/QualitySurvey.Section";
+import Footer from "./Sections/Footer/Footer";
 
 export default function Home() {
   return (
@@ -13,12 +15,8 @@ export default function Home() {
         <ControlledCarousel />
         <PhoneSection />
         <ScrollBanner />
-        {
-          // Customer support page
-          //Your credit score
-          //Independent Service quality survey results
-          //Footer
-        }
+        <Survey />
+        <Footer />
       </main>
     </div>
   );
