@@ -19,7 +19,13 @@ export async function POST(req: Request) {
       { uid: user?.uid, email: user?.email },
       { status: 200 }
     );
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 401 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 401 });
+    }
+    return NextResponse.json(
+      { error: "An unexpected error occurred" },
+      { status: 500 }
+    );
   }
 }
