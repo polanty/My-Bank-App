@@ -1,74 +1,83 @@
 "use client";
-//Current user functionality
+
 import { useGetUserTransactionsQuery } from "@/app/RTK_Query/authApi";
 import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
-
-//Pdf functionality
-//import { statementYears } from "@/app/components/statementYears/statement";
 import { generateYearMonthArray } from "@/app/Utilities/utilities";
 import UserPDFLib from "@/app/components/UserPDF/UserPDF";
+
 const Statements = () => {
-  //Should be able to generate pdf based on their months
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-
-  // Only assign if UID exists
   const uid = currentUser?.uid;
-
-  const modelAvaialaibleYears = generateYearMonthArray(new Date("2023-01-01")); //For testing purposes , Ideally will be the created date of the user account
-
-  const newYear: Record<string, string[]> = {
-    ...modelAvaialaibleYears,
-  };
-
-  const yearsKeys: string[] = Object.keys(newYear).slice(1).reverse();
-  // end of the array that generates the months based on the number of years
+  const modelAvailableYears = generateYearMonthArray(
+    new Date("2023-01-01")
+  ) as Record<string, string[]>;
+  const yearKeys = Object.keys(modelAvailableYears).slice(1).reverse();
 
   const {
     data: user,
     isLoading,
     error,
   } = useGetUserTransactionsQuery(uid as string, {
-    skip: !uid, // Don’t query until submitted
+    skip: !uid,
   });
 
-  if (isLoading) return <p>Loading transactions...</p>;
-  if (error) return <p>Error loading transactions</p>;
-
   return (
-    <div>
-      <h1>The Statements Page</h1>
+    <div className="space-y-6">
+      <header>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d95600]">
+          Documents
+        </p>
+        <h1 className="mt-2 text-4xl font-semibold text-stone-950">
+          Statements
+        </h1>
+        <p className="mt-2 max-w-2xl text-stone-600">
+          Download monthly PDF statements for proof of income, address checks
+          or your own records.
+        </p>
+      </header>
 
-      <h1>DownLoad or print statement online</h1>
+      {isLoading && (
+        <div className="rounded-lg border border-stone-200 bg-white p-8 text-center shadow-sm">
+          Loading statement archive...
+        </div>
+      )}
 
-      <p>
-        Whether you need to prove who you are, your address or your income, the
-        quickest way could be to download a summary of your transactions. You
-        can then save, email or print it from your device.
-      </p>
-      {yearsKeys.map((yearObj, ind) => {
-        //Now I have to create a function that Onclick of any month
-        //send the month into the new user object(Cloned from the current user)
-        //filter out only the current month from the transactions and print out the Pdf
-        return (
-          <div key={ind}>
-            <h3>{yearObj}</h3>
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">
+          Error loading statements.
+        </div>
+      )}
 
-            <div>
-              {newYear[yearObj].map((month, ind) => {
-                return (
+      {!isLoading && !error && (
+        <div className="space-y-4">
+          {yearKeys.map((year) => (
+            <section
+              key={year}
+              className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm"
+            >
+              <div className="mb-4 flex items-center justify-between border-b border-stone-200 pb-4">
+                <h2 className="text-2xl font-semibold text-stone-950">
+                  {year}
+                </h2>
+                <span className="text-sm font-semibold text-stone-500">
+                  {modelAvailableYears[year].length} months
+                </span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {modelAvailableYears[year].map((month) => (
                   <UserPDFLib
                     user={user}
                     month={month}
-                    year={yearObj}
-                    key={ind}
+                    year={year}
+                    key={`${year}-${month}`}
                   />
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

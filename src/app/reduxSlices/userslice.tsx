@@ -6,6 +6,9 @@ export interface initialstateInterface {
     uid: string;
     displayName: string;
     isactive: boolean;
+    accountNumber?: string;
+    Balance?: number;
+    Bonus?: number;
   } | null;
   readonly testselector: { email: string; password: string } | null;
   readonly loading: boolean;
@@ -13,7 +16,7 @@ export interface initialstateInterface {
 
 const initialState: initialstateInterface = {
   currentUser: null,
-  loading: false,
+  loading: true,
   testselector: null,
 };
 

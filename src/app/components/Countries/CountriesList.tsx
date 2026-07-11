@@ -1,134 +1,103 @@
-// components/CountryForm.js
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { useConvertCurrencyLatestQuery } from "@/app/RTK_Query/Converter";
 
 export const countries = [
-  { code: "USD", name: "United States" },
-  { code: "AUD", name: "Australia" },
+  { code: "USD", name: "United States dollar" },
+  { code: "AUD", name: "Australian dollar" },
   { code: "EUR", name: "Euro" },
   { code: "CHF", name: "Swiss franc" },
-  { code: "NGN", name: "Nigeria" },
-  // Add more as needed
+  { code: "NGN", name: "Nigerian naira" },
 ];
 
 const CountryForm = () => {
   const { data, error, isLoading } = useConvertCurrencyLatestQuery({
     base: "GBP",
   });
+  const [amount, setAmount] = useState(100);
+  const [target, setTarget] = useState("USD");
 
-  const requiredConversionDetails = { ...data };
+  const rate = data?.conversion_rates?.[target] ?? 0;
+  const converted = rate * amount;
+  const lastUpdated =
+    typeof data?.time_last_update_utc === "string"
+      ? data.time_last_update_utc
+      : "Not supplied";
 
-  const [country1, setCountry1] = useState("GBP");
-  const [country2, setCountry2] = useState("USD");
+  useEffect(() => {
+    if (!data?.conversion_rates?.[target]) {
+      setTarget("USD");
+    }
+  }, [data, target]);
 
-  const rateFrom = requiredConversionDetails?.conversion_rates?.[country1] ?? 1;
-  const rateTo = requiredConversionDetails?.conversion_rates?.[country2] ?? 1;
+  if (isLoading) {
+    return <p className="text-stone-600">Loading exchange rates...</p>;
+  }
 
-  // field1: requiredConversionDetails?.conversion_rates[country1],
-  // field2: requiredConversionDetails?.conversion_rates[country2],
-
-  const [formData, setFormData] = useState({
-    field1: rateFrom,
-    field2: rateTo,
-    country1: "GBP",
-    country2: "USD",
-  });
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching conversion</p>;
-
-  type FormField = "field1" | "field2" | "country1" | "country2";
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const name = e.target.name as FormField;
-    const value = e.target.value;
-
-    setFormData((prev) => {
-      const updated = { ...prev };
-
-      // Update field1 if user types a new amount
-      if (name === "field1") {
-        updated.field1 = parseFloat(value);
-      }
-
-      // Update country1 or country2
-      if (name === "country1" || name === "country2") {
-        updated[name] = value;
-      }
-
-      // ✅ Recalculate field2 based on selected countries and input amount
-      const conversionRates: Record<string, number> =
-        requiredConversionDetails?.conversion_rates ?? {};
-
-      const rateFrom = conversionRates[updated.country1];
-      const rateTo = conversionRates[updated.country2];
-
-      if (rateFrom && rateTo && !isNaN(updated.field1)) {
-        const convertedAmount = (rateTo / rateFrom) * updated.field1;
-        updated.field2 = parseFloat(convertedAmount.toFixed(2));
-      }
-
-      return updated;
-    });
-  };
-
-  console.log(formData);
+  if (error || !data?.conversion_rates) {
+    return (
+      <p className="rounded-md bg-red-50 p-4 text-red-700">
+        Error fetching conversion rates. Check your currency API key and try
+        again.
+      </p>
+    );
+  }
 
   return (
-    <>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          maxWidth: "500px",
-        }}
-      >
-        {/* First Input + Country Selector */}
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+    <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+      <form className="space-y-5">
+        <label className="block">
+          <span className="text-sm font-semibold text-stone-700">
+            Amount in GBP
+          </span>
           <input
             type="number"
-            name="field1"
-            placeholder="Field 1"
-            value={formData.field1}
-            onChange={handleChange}
-            style={{ flex: 1 }}
+            min="0"
+            value={amount}
+            onChange={(event) => setAmount(Number(event.target.value))}
+            className="mt-2 w-full rounded-md border border-stone-300 px-4 py-3 text-stone-950"
           />
-          <select
-            name="country1"
-            value={formData.country1}
-            onChange={handleChange}
-          >
-            <option value="GBP">GBP</option>
-          </select>
-        </div>
+        </label>
 
-        {/* Second Input + Country Selector */}
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <input
-            type="number"
-            name="field2"
-            placeholder="Field 2"
-            value={formData.field2}
-            onChange={handleChange}
-            style={{ flex: 1 }}
-          />
+        <label className="block">
+          <span className="text-sm font-semibold text-stone-700">
+            Convert to
+          </span>
           <select
             name="country2"
-            value={formData.country2}
-            onChange={handleChange}
+            value={target}
+            onChange={(event) => setTarget(event.target.value)}
+            className="mt-2 w-full rounded-md border border-stone-300 px-4 py-3 text-stone-950"
           >
             {countries.map((country) => (
               <option key={country.code} value={country.code}>
-                {country.name}
+                {country.code} - {country.name}
               </option>
             ))}
           </select>
-        </div>
+        </label>
       </form>
-    </>
+
+      <div className="rounded-lg bg-[#213f29] p-6 text-white">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#faebbb]">
+          Estimated value
+        </p>
+        <p className="mt-4 text-4xl font-semibold">
+          {target}{" "}
+          {converted.toLocaleString("en-GB", {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2,
+          })}
+        </p>
+        <p className="mt-4 text-sm text-white/70">
+          1 GBP = {rate.toFixed(4)} {target}
+        </p>
+        <p className="mt-1 text-xs text-white/60">
+          Last updated: {lastUpdated}
+        </p>
+      </div>
+    </div>
   );
 };
 

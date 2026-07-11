@@ -1,15 +1,15 @@
-// hooks/useAuthListener.js
 "use client";
 
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { auth } from "../Firebase/Firebase";
 import { login, logout, setLoading } from "../reduxSlices/userslice";
 
 const useAuthListener = () => {
   const dispatch = useDispatch();
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,26 +17,31 @@ const useAuthListener = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("Auth state changed. User:", user);
         dispatch(
           login({
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
+            isactive: true,
           })
         );
-        router.push("/userprofile");
-        dispatch(setLoading(false));
+
+        if (pathname === "/signInpage" || pathname === "/signUp") {
+          router.replace("/userprofile");
+        }
       } else {
         dispatch(logout());
-        router.push("/");
+
+        if (pathname.startsWith("/userprofile")) {
+          router.replace("/signInpage");
+        }
       }
 
-      dispatch(setLoading(false)); // ✅ End loading here
+      dispatch(setLoading(false));
     });
 
     return () => unsubscribe();
-  }, [dispatch, router]);
+  }, [dispatch, pathname, router]);
 };
 
 export default useAuthListener;

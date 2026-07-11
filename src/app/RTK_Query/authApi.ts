@@ -4,7 +4,6 @@ import {
   createNewUserWithData,
   signInUserUsingEmailandPassword,
   getUserTransactions,
-  getUserTransactions3,
   testData,
 } from "../Firebase/Firebase";
 
@@ -24,7 +23,7 @@ export interface initialUserData {
   displayName: string;
   email: string; // You might store email here for easy lookup, but Auth is source of truth
   accountNumber: string;
-  createdAt: Date; // Timestamp of creation
+  createdAt: string; // Timestamp of creation
   // Here's your array to hold other objects!
   Transactions: transacs[];
 
@@ -34,11 +33,38 @@ export interface initialUserData {
   // ... other user-specific fields you need
 }
 
-// Define your input type
-type PaginationRequest = {
+type AuthUser = {
   uid: string;
-  page: number;
-  limit: number;
+  email: string;
+  displayName: string;
+  isactive: boolean;
+};
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : "An unexpected error occurred";
+
+const toCustomError = (error: unknown) => ({
+  status: "CUSTOM_ERROR" as const,
+  error: getErrorMessage(error),
+});
+
+const normalizeAccount = (
+  user: Partial<initialUserData> | undefined,
+  uid: string
+): initialUserData | null => {
+  if (!user) return null;
+
+  return {
+    uid,
+    displayName: user.displayName ?? "",
+    email: user.email ?? "",
+    accountNumber: user.accountNumber ?? "",
+    createdAt: user.createdAt ?? new Date().toISOString(),
+    Transactions: user.Transactions ?? [],
+    isactive: user.isactive ?? true,
+    Bonus: user.Bonus ?? 0,
+    Balance: user.Balance ?? 0,
+  };
 };
 
 export const authApi = createApi({
@@ -47,12 +73,7 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     //Sign Up mutations
     signup: builder.mutation<
-      {
-        uid: string;
-        email: string;
-        displayName: string;
-        isactive: boolean;
-      },
+      AuthUser,
       { email: string; password: string; displayName: string }
     >({
       async queryFn({ email, password, displayName }) {
@@ -64,37 +85,34 @@ export const authApi = createApi({
           );
           return {
             data: {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              isactive: user.isactive,
+              uid: user?.uid ?? "",
+              email: user?.email ?? email,
+              displayName: user?.displayName ?? displayName,
+              isactive: user?.isactive ?? true,
             },
           };
-        } catch (error: any) {
-          return { error: { message: error.message } };
+        } catch (error: unknown) {
+          return { error: toCustomError(error) };
         }
       },
     }),
 
     //Sign In mutations
-    signin: builder.mutation<
-      { uid: string; email: string; displayName: string; isactive: boolean },
-      { email: string; password: string }
-    >({
+    signin: builder.mutation<AuthUser, { email: string; password: string }>({
       async queryFn({ email, password }) {
         try {
           const user = await signInUserUsingEmailandPassword(email, password);
 
           return {
             data: {
-              uid: user?.uid,
-              email: user?.email,
-              displayName: user?.displayName,
-              isactive: user?.isactive,
+              uid: user?.uid ?? "",
+              email: user?.email ?? email,
+              displayName: user?.displayName ?? "",
+              isactive: user?.isactive ?? true,
             },
           };
-        } catch (error: any) {
-          return { error: { message: error.message } };
+        } catch (error: unknown) {
+          return { error: toCustomError(error) };
         }
       },
     }),
@@ -104,9 +122,20 @@ export const authApi = createApi({
       queryFn: async (uid) => {
         try {
           const user = await getUserTransactions(uid); // your async Firestore fetch
-          return { data: user };
-        } catch (error: any) {
-          return { error: { status: "CUSTOM_ERROR", error: error.message } };
+          const account = normalizeAccount(user, uid);
+
+          if (!account) {
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "User account not found",
+              },
+            };
+          }
+
+          return { data: account };
+        } catch (error: unknown) {
+          return { error: toCustomError(error) };
         }
       },
     }),
@@ -119,8 +148,8 @@ export const authApi = createApi({
         try {
           const user = await testData(uid, page, limit); // Updated to handle pagination
           return { data: user };
-        } catch (error: any) {
-          return { error: { status: "CUSTOM_ERROR", error: error.message } };
+        } catch (error: unknown) {
+          return { error: toCustomError(error) };
         }
       },
     }),

@@ -1,44 +1,75 @@
 "use client";
 
+import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useGetUserTransactionsQuery } from "../RTK_Query/authApi";
 import TransactionsPage from "../components/Transactions/Transactions";
 
+const money = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+});
+
 export default function UserProfile() {
-  const router = useRouter();
-
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-
-  useEffect(() => {
-    if (!currentUser) {
-      router.replace("/signin");
+  const { data: account } = useGetUserTransactionsQuery(
+    currentUser?.uid as string,
+    {
+      skip: !currentUser?.uid,
     }
-  }, [currentUser, router]);
+  );
 
-  //1) Display user profile UI  - availaible balance
-
-  // i) every user should able to send and receive transactions
-
-  // Ui Side bar List
-  // Payments and Transfers, Direct debit, Card details, Overdraft, Statements and notices
-
-  //2) Display all the user transactions
-
-  //3) From all my sample Ui's LLyods bank, create all the navigatable routes
-  //which includes  1) Card section
-  // 2 Direct debit - create , delete, update and read direct debits and also the charges should be made on the date expected.
-  // 3 generate pdf of each transactions - debit and credit (receipt) and also a range of date like month
+  const quickActions = [
+    { href: "/userprofile/Transfers", label: "Make a payment" },
+    { href: "/userprofile/Statements", label: "Download statements" },
+    { href: "/userprofile/Card", label: "Manage card" },
+  ];
 
   return (
-    <div className="mx-auto max-w-9/10 p-4">
-      <h1>Welcome to the User Profile</h1>
+    <div className="space-y-6">
+      <section className="overflow-hidden rounded-lg bg-[#213f29] text-white shadow-sm">
+        <div className="grid gap-6 p-6 lg:grid-cols-[1.5fr_1fr] lg:p-8">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#faebbb]">
+              Current account
+            </p>
+            <h1 className="mt-3 text-4xl font-semibold">
+              Welcome back, {currentUser?.displayName || "there"}
+            </h1>
+            <p className="mt-3 max-w-2xl text-white/80">
+              View your balance, send money, manage card settings and download
+              monthly statements from your secure workspace.
+            </p>
+          </div>
+          <div className="rounded-lg bg-white/10 p-5">
+            <p className="text-sm text-white/70">Available balance</p>
+            <p className="mt-2 text-4xl font-semibold">
+              {money.format(account?.Balance ?? 0)}
+            </p>
+            <p className="mt-4 text-sm text-white/70">
+              Account {account?.accountNumber ?? "pending"}
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <h1>{currentUser?.displayName}</h1>
-      <>
-        <TransactionsPage />
-      </>
+      <section className="grid gap-4 md:grid-cols-3">
+        {quickActions.map((action) => (
+          <Link
+            href={action.href}
+            key={action.href}
+            className="rounded-lg border border-stone-200 bg-white p-5 text-stone-950 shadow-sm transition hover:-translate-y-0.5 hover:border-[#d95600]"
+          >
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#d95600]">
+              Action
+            </p>
+            <h2 className="mt-3 text-xl font-semibold">{action.label}</h2>
+          </Link>
+        ))}
+      </section>
+
+      <TransactionsPage />
     </div>
   );
 }
