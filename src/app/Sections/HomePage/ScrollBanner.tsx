@@ -1,4 +1,3 @@
-import { CustomImage } from "@/app/components/Images/CustomImage";
 import { useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -34,7 +33,7 @@ const ScrollBanner = () => {
     tl.addLabel("card2");
     // set the active section based on the direction, and position it part-way through the transition because that's more intuitive
     tl.add(
-      () => setActiveNav(tl.scrollTrigger.direction > 0 ? 1 : 0),
+      () => setActiveNav((tl.scrollTrigger?.direction ?? 1) > 0 ? 1 : 0),
       "-=0.15"
     );
     tl.to(
@@ -58,7 +57,7 @@ const ScrollBanner = () => {
     });
     tl.addLabel("card3");
     tl.add(
-      () => setActiveNav(tl.scrollTrigger.direction > 0 ? 2 : 1),
+      () => setActiveNav((tl.scrollTrigger?.direction ?? 1) > 0 ? 2 : 1),
       "-=0.15"
     );
 
@@ -79,23 +78,26 @@ const ScrollBanner = () => {
 
     tl.to(".card3", {});
 
-    gsap.utils.toArray(".nav a").forEach((a, i) => {
+    gsap.utils.toArray<HTMLAnchorElement>(".nav a").forEach((a, i) => {
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        const pad = i === 0 ? 0 : tl.scrollTrigger.direction > 0 ? 2 : -2;
+        const pad =
+          i === 0 ? 0 : (tl.scrollTrigger?.direction ?? 1) > 0 ? 2 : -2;
         gsap.to(window, {
           scrollTo: labelToScroll(tl, "card" + (i + 1)) + pad,
         });
       });
     });
-    function labelToScroll(timeline, label) {
-      const st = timeline.scrollTrigger,
-        progress = timeline.labels[label] / timeline.duration();
+    function labelToScroll(timeline: gsap.core.Timeline, label: string) {
+      const st = timeline.scrollTrigger;
+      if (!st) return 0;
+
+      const progress = timeline.labels[label] / timeline.duration();
       return st.start + (st.end - st.start) * progress;
     }
 
-    const circles = gsap.utils.toArray(".nav .circle");
-    function setActiveNav(index) {
+    const circles = gsap.utils.toArray<HTMLElement>(".nav .circle");
+    function setActiveNav(index: number) {
       circles.forEach((circle, i) =>
         circle.classList[i === index ? "add" : "remove"]("active")
       );

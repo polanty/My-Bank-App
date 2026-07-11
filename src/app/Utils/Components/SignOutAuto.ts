@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { signUserOut } from "@/app/Firebase/Firebase"; // your sign-out function
 import { useDispatch } from "react-redux";
 import { logout } from "@/app/reduxSlices/userslice"; // your logout action
@@ -11,7 +11,7 @@ export default function useAutoSignOut() {
 
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
 
     timer.current = setTimeout(async () => {
@@ -19,7 +19,7 @@ export default function useAutoSignOut() {
       dispatch(logout()); // Redux state cleanup
       router.push("/");
     }, AUTO_LOGOUT_MINUTES * 60 * 1000);
-  };
+  }, [dispatch, router]);
 
   useEffect(() => {
     const activityEvents = [
@@ -41,5 +41,5 @@ export default function useAutoSignOut() {
         window.removeEventListener(event, resetTimer)
       );
     };
-  }, []);
+  }, [resetTimer]);
 }

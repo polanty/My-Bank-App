@@ -129,7 +129,7 @@
 }
 
 body {
-  font-family: var(--font-Cormorant), var(--font-sans);
+  font-family: Georgia, "Times New Roman", Arial, sans-serif;
 }
 
 .button-primary,

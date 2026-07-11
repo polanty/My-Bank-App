@@ -1,27 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./Provider/providers";
 import Navigation from "./components/Navigation/Navigation";
-
-// GT Ultra Median Regular
-
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"], // Choose weights you need
-  style: ["normal", "italic"], // Optional: include italic styles
-  display: "swap",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "EGO-bank - Bank Accounts, Mortgages, Loans and Savings",
@@ -41,9 +21,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/tab-image.png" />
       </head>
-      <body
-        className={`${cormorantGaramond.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body>
         <Providers>
           <Navigation />
           {children}

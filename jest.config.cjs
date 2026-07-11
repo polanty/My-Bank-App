@@ -1,6 +1,6 @@
 module.exports = {
   transform: {
-    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.[jt]sx?$": ["babel-jest", { presets: ["next/babel"] }],
   },
   testEnvironment: "node",
 };
