@@ -104,17 +104,71 @@ const ScrollBanner = () => {
     }
   }, []);
 
+  const bankingProducts = [
+    {
+      id: "1",
+      className: "card1 z-20",
+      eyebrow: "Everyday banking",
+      title: "EGO Flex Current",
+      description:
+        "A fictional current account built for quick balance checks, instant internal transfers and clear spending history.",
+      details: [
+        ["Monthly fee", "GBP 0"],
+        ["Internal transfers", "Instant"],
+        ["Card controls", "Included"],
+      ],
+      action: "Open current account",
+    },
+    {
+      id: "2",
+      className: "card2 z-30",
+      eyebrow: "Business banking",
+      title: "EGO Business Flow",
+      description:
+        "Separate operating cash, scheduled supplier payments and month-end statement downloads for a small team.",
+      details: [
+        ["Account number", "1004502198"],
+        ["Payment limit", "GBP 25,000"],
+        ["Statement export", "PDF"],
+      ],
+      action: "Explore business tools",
+    },
+    {
+      id: "3",
+      className: "card3 z-40",
+      eyebrow: "Planning ahead",
+      title: "EGO Saver Reserve",
+      description:
+        "A simple savings space for emergency funds, fixed goals and fictional interest projections inside online banking.",
+      details: [
+        ["Projected AER", "4.10%"],
+        ["Goal pockets", "5 included"],
+        ["Access", "Same day"],
+      ],
+      action: "Start saving",
+    },
+  ];
+
   return (
-    <section className="relative w-screen  p-30">
+    <section className="relative w-screen overflow-hidden px-4 py-16 md:px-10">
       <div className="container">
         <div className="row">
           <div className="col-12">
             <div className="block_top">
-              <h1>Find the right products for your business</h1>
+              <p className="scroll-banner-eyebrow">Featured banking journeys</p>
+              <h1>Products that move with the way you bank</h1>
               <p>
-                Discover what we could do for your business. Explore our
-                products today.
+                Choose from fictional EGO Bank accounts designed for personal
+                spending, business cash flow and longer-term financial goals.
               </p>
+              <div
+                className="scroll-banner-summary"
+                aria-label="Product highlights"
+              >
+                <span>Secure app access</span>
+                <span>PDF statements</span>
+                <span>Fast internal payments</span>
+              </div>
             </div>
           </div>
         </div>
@@ -140,15 +194,36 @@ const ScrollBanner = () => {
                 </li>
               </ul>
 
-              <div className="custom-card card1 z-20" id="1">
-                <h1>Slide 1</h1>
-              </div>
-              <div className="custom-card card2 z-30" id="2">
-                <h1>Slide 2</h1>
-              </div>
-              <div className="custom-card card3 z-40" id="3">
-                <h1>Slide 3</h1>
-              </div>
+              {bankingProducts.map((product) => (
+                <div
+                  className={`custom-card ${product.className}`}
+                  id={product.id}
+                  key={product.id}
+                >
+                  <div className="scroll-card-content">
+                    <div>
+                      <p className="scroll-banner-eyebrow">{product.eyebrow}</p>
+                      <h2>{product.title}</h2>
+                      <p className="scroll-card-description">
+                        {product.description}
+                      </p>
+                    </div>
+
+                    <div className="scroll-card-details">
+                      {product.details.map(([label, value]) => (
+                        <div className="scroll-card-row" key={label}>
+                          <span>{label}</span>
+                          <strong>{value}</strong>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button type="button" className="scroll-card-action">
+                      {product.action}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -156,7 +231,17 @@ const ScrollBanner = () => {
         <div className="row">
           <div className="col-12">
             <div className="next_block">
-              <h1>End content</h1>
+              <div>
+                <p className="scroll-banner-eyebrow">Ready when you are</p>
+                <h2>Log on to continue your EGO Bank journey</h2>
+                <p>
+                  Existing fictional customers can review balances, download
+                  statements and send payments from the secure account area.
+                </p>
+              </div>
+              <a href="/signInpage" className="scroll-card-action">
+                Log on
+              </a>
             </div>
           </div>
         </div>
@@ -166,73 +251,3 @@ const ScrollBanner = () => {
 };
 
 export default ScrollBanner;
-
-// {/* <section className="relative w-screen h-screen  p-30">
-//       {/* bg-blue-500 */}
-//       <div id="smooth-wrapper">
-//         <div id="smooth-content">
-//           <div className="spacer"></div>
-
-//           <div className="card-containers">
-//             <div className="stacked-cards">
-//               {/* Card content goes in here  */}
-//               <div className="container-sm bg-red-700 rounded-4xl p-4 mb-20">
-//                 <div className="h-[70vh] grid grid-cols-2 grid-rows-1">
-//                   <div className="h-full flex items-center  justify-center">
-//                     <div>
-//                       <h3 className="font-sans font-bold text-5xl text-black">
-//                         Your bank in your pocket
-//                       </h3>
-//                       <p className="font-sans text-xl text-black">
-//                         Join the 10 million customers who already use our highly
-//                         rated app.
-//                       </p>
-//                     </div>
-//                   </div>
-
-//                   <CustomImage text="" src="/images/Mobile1.png" />
-//                 </div>
-//               </div>
-//               {/* Content 2 */}
-//               <div className="container-sm bg-blue-700 rounded-4xl p-4 mb-20">
-//                 <div className="h-[70vh] grid grid-cols-2 grid-rows-1">
-//                   <div className="h-full flex items-center  justify-center">
-//                     <div>
-//                       <h3 className="font-sans font-bold text-5xl text-black">
-//                         Your bank in your pocket
-//                       </h3>
-//                       <p className="font-sans text-xl text-black">
-//                         Join the 10 million customers who already use our highly
-//                         rated app.
-//                       </p>
-//                     </div>
-//                   </div>
-
-//                   <CustomImage text="" src="/images/Mobile1.png" />
-//                 </div>
-//               </div>
-//               {/* Content 3 */}
-//               <div className="container-sm bg-green-700 rounded-4xl p-4 mb-20">
-//                 <div className="h-[70vh] grid grid-cols-2 grid-rows-1">
-//                   <div className="h-full flex items-center  justify-center">
-//                     <div className="card-content">
-//                       <h3 className="font-sans font-bold text-5xl text-black">
-//                         Your bank in your pocket
-//                       </h3>
-//                       <p className="font-sans text-xl text-black">
-//                         Join the 10 million customers who already use our highly
-//                         rated app.
-//                       </p>
-//                     </div>
-//                   </div>
-
-//                   <CustomImage text="" src="/images/Mobile1.png" />
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="spacer"></div>
-//         </div>
-//       </div>
-// </section> */}

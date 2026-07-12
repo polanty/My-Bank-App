@@ -267,26 +267,45 @@ input:active {
 
 .block_top {
   background: #213f29;
-  height: 400px;
-  color: #faebbb;
+  min-height: 400px;
+  color: #fff7df;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
+  gap: 1rem;
   margin-bottom: 100px;
   margin-top: 50px;
-  border-radius: 50px;
+  border-radius: 8px;
+  padding: clamp(2rem, 5vw, 4.5rem);
+}
+.block_top h1,
+.next_block h2 {
+  max-width: 760px;
+  font-size: clamp(2.25rem, 5vw, 4.75rem);
+  line-height: 0.95;
+  margin: 0;
+}
+.block_top p,
+.next_block p {
+  max-width: 680px;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 247, 223, 0.82);
 }
 .next_block {
   background: #213f29;
-  height: 400px;
-  color: #faebbb;
+  min-height: 360px;
+  color: #fff7df;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  gap: 2rem;
   margin-bottom: 50px;
   margin-top: 150px;
-  border-radius: 50px;
+  border-radius: 8px;
+  padding: clamp(2rem, 5vw, 4rem);
 }
 .cards {
   position: relative;
@@ -304,13 +323,15 @@ input:active {
   top: 0px;
   height: 70vh;
   background-color: #213f29;
-  color: #faebbb;
+  color: #fff7df;
   margin-bottom: 50px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  border-radius: 50px;
+  border-radius: 8px;
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 4rem);
 }
 .card1 {
 }
@@ -350,8 +371,8 @@ input:active {
   text-decoration: none;
 }
 .nav .circle {
-  border: 1px solid #faebbb;
-  color: #faebbb;
+  border: 1px solid #fff7df;
+  color: #fff7df;
   width: 25px;
   height: 25px;
   text-align: center;
@@ -363,6 +384,116 @@ input:active {
   -webkit-transition: 0.4s ease;
 }
 .nav .active {
-  background: #faebbb;
-  color: #213f29;
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+.scroll-banner-eyebrow {
+  color: var(--primary-color2);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+.scroll-banner-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.scroll-banner-summary span {
+  border: 1px solid rgba(255, 247, 223, 0.28);
+  border-radius: 999px;
+  color: #fff7df;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.85rem;
+}
+.scroll-card-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.78fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  width: min(100%, 1050px);
+  margin-left: clamp(1rem, 6vw, 5rem);
+}
+.scroll-card-content h2 {
+  color: #fff7df;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 0.96;
+  margin: 0.65rem 0 1rem;
+}
+.scroll-card-description {
+  color: rgba(255, 247, 223, 0.82);
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 620px;
+}
+.scroll-card-details {
+  align-self: center;
+  border: 1px solid rgba(255, 247, 223, 0.24);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.scroll-card-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 247, 223, 0.18);
+}
+.scroll-card-row:last-child {
+  border-bottom: none;
+}
+.scroll-card-row span {
+  color: rgba(255, 247, 223, 0.7);
+}
+.scroll-card-row strong {
+  color: #fff7df;
+  font-weight: 700;
+  text-align: right;
+}
+.scroll-card-action {
+  align-self: start;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  color: white;
+  display: inline-flex;
+  font-weight: 700;
+  justify-content: center;
+  padding: 0.85rem 1.2rem;
+  text-decoration: none;
+  width: fit-content;
+}
+.scroll-card-action:hover,
+.scroll-card-action:focus {
+  background: var(--primary-color2);
+  border-color: var(--primary-color2);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .block_top,
+  .next_block,
+  .custom-card {
+    border-radius: 8px;
+  }
+  .next_block {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .cards,
+  .custom-card {
+    min-height: 760px;
+    height: 760px;
+  }
+  .scroll-card-content {
+    grid-template-columns: 1fr;
+    margin-left: 2.25rem;
+    width: calc(100% - 2.25rem);
+  }
+  .nav {
+    left: 18px;
+  }
 }
