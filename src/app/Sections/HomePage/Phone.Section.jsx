@@ -1,5 +1,4 @@
 import { Container } from "react-bootstrap";
-import { CustomImage } from "@/app/components/Images/CustomImage";
 import AnimatedImageScroll from "@/app/components/Animation/ImageScrollIn/ImageScrollIn";
 
 const PhoneSection = () => {
@@ -19,8 +18,7 @@ const PhoneSection = () => {
             </div>
           </div>
 
-          {/* <CustomImage text="" src="/images/Mobile1.png" /> */}
-          <AnimatedImageScroll src="/images/Mobile1.png" />
+          <AnimatedImageScroll src="/Images/Mobile1.png" />
         </div>
       </Container>
     </section>

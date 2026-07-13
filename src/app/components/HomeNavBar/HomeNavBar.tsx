@@ -37,7 +37,7 @@ const HomeNavBar = () => {
       dispatch(setLoading(false));
       router.push("/");
     } catch (error) {
-      console.log(error);
+      console.error("Sign out failed:", error);
     }
   };
 

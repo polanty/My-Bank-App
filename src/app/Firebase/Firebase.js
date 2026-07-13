@@ -272,7 +272,6 @@ export async function createNewUserWithData(
     // Set the document in Firestore
     await setDoc(userDocRef, initialUserData);
 
-    console.log("New user created and data initialized in Firestore:", userId);
     return {
       uid: userId,
       email: initialUserData.email,
@@ -299,8 +298,6 @@ export async function signInUserUsingEmailandPassword(email, password) {
     const docSnap = await getDoc(userDocRef);
 
     if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-
       const data = docSnap.data();
 
       // 🔁 Convert Firestore Timestamp fields to ISO strings for Redux compatibility
@@ -333,13 +330,13 @@ export async function signInUserUsingEmailandPassword(email, password) {
       // return docSnap.data();
     } else {
       // docSnap.data() will be undefined in this case
-      console.log("No such document!");
+      return undefined;
     }
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
 
-    console.log(errorCode, errorMessage);
+    console.error("Sign in failed:", errorCode, errorMessage);
 
     throw error;
   }
@@ -349,7 +346,7 @@ export async function signUserOut() {
   try {
     await signOut(auth);
   } catch (error) {
-    console.log(error);
+    console.error("Sign out failed:", error);
   }
 }
 
@@ -359,8 +356,6 @@ export const getUserTransactions = async (userId) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log("Document data:", docSnap.data());
-
     const data = docSnap.data();
 
     // 🔁 Convert Firestore Timestamp fields to ISO strings for Redux compatibility
@@ -392,7 +387,7 @@ export const getUserTransactions = async (userId) => {
     // return docSnap.data();
   } else {
     // docSnap.data() will be undefined in this case
-    console.log("No such document!");
+    return undefined;
   }
 };
 
@@ -402,9 +397,7 @@ export const getUserByAccountNumber = async (accountNumber) => {
   const q = query(usersRef, where("accountNumber", "==", accountNumber));
 
   const querySnapshot = await getDocs(q);
-  // console.log(querySnapshot);
   if (querySnapshot.empty) {
-    console.log("No matching documents.");
     return null;
   }
 
@@ -483,7 +476,6 @@ export const addTransactionAndUpdateBalance = async (userId, newTx) => {
       });
     });
 
-    console.log("Transaction added and balance updated.");
   } catch (e) {
     console.error("Transaction failed: ", e);
   }
@@ -562,7 +554,6 @@ export const transferFunds = async (
       });
     });
 
-    console.log("Transfer successful");
   } catch (e) {
     console.error("Transfer failed: ", e.message);
     throw e;
@@ -595,8 +586,6 @@ export const getUserTransactions3 = async (uid, page, limit) => {
   const transactionsRef = collection(db, `users/${uid}/transactions`);
 
   let q = query(transactionsRef, orderBy("Date", "desc"), fbLimit(limit));
-
-  console.log(q);
 
   const prevDocs = lastVisibleDocs[uid] || [];
 

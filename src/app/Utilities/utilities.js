@@ -37,9 +37,6 @@
 //   return yearData.slice(1);
 // };
 
-//const result = generateYearMonthArray(new Date("2025-01-01"));
-//console.log(result);
-
 export const generateYearMonthArray = (startDate) => {
   const monthNames = [
     "January",
