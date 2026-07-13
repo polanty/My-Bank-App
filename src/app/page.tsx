@@ -1,6 +1,5 @@
 "use client";
 
-import HomeNavBar from "./components/HomeNavBar/HomeNavBar";
 import ControlledCarousel from "./components/Courasels/Courasels";
 import PhoneSection from "./Sections/HomePage/Phone.Section";
 import ScrollBanner from "./Sections/HomePage/ScrollBanner";
@@ -11,7 +10,6 @@ export default function Home() {
   return (
     <div>
       <main className="overflow-hidden">
-        <HomeNavBar />
         <ControlledCarousel />
         <PhoneSection />
         <ScrollBanner />

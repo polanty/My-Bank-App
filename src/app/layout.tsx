@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./Provider/providers";
-import Navigation from "./components/Navigation/Navigation";
+import HomeNavBar from "./components/HomeNavBar/HomeNavBar";
 
 export const metadata: Metadata = {
   title: "EGO-bank - Bank Accounts, Mortgages, Loans and Savings",
@@ -23,7 +23,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <Navigation />
+          <HomeNavBar />
           {children}
         </Providers>
       </body>
