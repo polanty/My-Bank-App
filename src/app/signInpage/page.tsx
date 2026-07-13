@@ -14,6 +14,11 @@ type AuthFormData = {
   password: string;
 };
 
+const demoCredentials = {
+  email: "test@gmail.com",
+  password: "Godisgood1995!",
+};
+
 const getErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Authentication failed";
 
@@ -25,8 +30,8 @@ export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState<AuthFormData>({
     displayName: "",
-    email: "",
-    password: "",
+    email: demoCredentials.email,
+    password: demoCredentials.password,
   });
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -34,6 +39,16 @@ export default function AuthPage() {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
+    }));
+  };
+
+  const useDemoCredentials = () => {
+    setIsSignUp(false);
+    setAuthError(null);
+    setFormData((prev) => ({
+      ...prev,
+      email: demoCredentials.email,
+      password: demoCredentials.password,
     }));
   };
 
@@ -110,6 +125,37 @@ export default function AuthPage() {
           </h2>
 
           <form onSubmit={handleFormSubmit} className="mt-6 space-y-4">
+            {!isSignUp && (
+              <div className="rounded-md border border-[#f2c8ad] bg-[#fff7f2] p-4 text-sm text-stone-700">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="font-semibold text-stone-950">
+                      Recruiter demo access
+                    </p>
+                    <p className="mt-1">
+                      Email:{" "}
+                      <span className="font-semibold">
+                        {demoCredentials.email}
+                      </span>
+                    </p>
+                    <p>
+                      Password:{" "}
+                      <span className="font-semibold">
+                        {demoCredentials.password}
+                      </span>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={useDemoCredentials}
+                    className="rounded-md border border-[#d95600] px-3 py-2 text-sm font-semibold text-[#d95600] transition hover:bg-[#d95600] hover:text-white"
+                  >
+                    Use demo details
+                  </button>
+                </div>
+              </div>
+            )}
+
             {isSignUp && (
               <label className="block">
                 <span className="text-sm font-semibold text-stone-700">
