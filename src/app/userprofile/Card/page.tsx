@@ -46,7 +46,7 @@ const CardPage = () => {
                     ? `4929 2000 ${lastFour.padStart(4, "0")} 8842`
                     : "4929 2000 **** ****"}
                 </p>
-                <div className="mt-5 flex items-end justify-between">
+                <div className="flex items-end justify-between">
                   <div>
                     <p className="text-xs uppercase text-white/60">
                       Card holder
