@@ -34,7 +34,7 @@ const CardPage = () => {
 
       <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
-          <div className="relative aspect-[1.58/1] overflow-hidden rounded-lg bg-[#213f29] p-6 text-white shadow-xl">
+          <div className="relative aspect-[1.65/1] overflow-hidden rounded-lg bg-[#213f29] p-6 text-white shadow-xl">
             <div className="relative flex h-full flex-col justify-between">
               <div className="flex items-center justify-between">
                 <p className="text-lg font-semibold">EGO Bank</p>
